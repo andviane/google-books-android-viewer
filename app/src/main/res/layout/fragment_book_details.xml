@@ -1,0 +1,81 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:padding="8sp"
+              tools:context="com.ames.books.BookDetailsFragment">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="32sp"
+        android:textStyle="italic"
+        tools:text="The great book about nothing"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/picture"
+                android:layout_width="256sp"
+                android:layout_height="210sp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="12sp"
+                android:layout_marginTop="12sp"
+                android:contentDescription="@string/book_cover"
+                app:srcCompat="@mipmap/ic_launcher"/>
+
+            <TextView
+                android:id="@+id/subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="12sp"
+                android:layout_marginBottom="8sp"
+                android:textStyle="italic"
+                tools:text="The subtitle can tell more about this book"/>
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewStart"
+                tools:text="The detailed description of this book is a long text. It consists of multiple sentences. This is expected to take significant part of the screen"/>
+
+            <TextView
+                android:id="@+id/authors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginTop="12sp"
+                tools:text="Jon Doe, John Smith"/>
+
+            <TextView
+                android:id="@+id/bottom_line"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                tools:text="Big Business GMBH, 2000.12.12."
+                />
+
+            <TextView
+                android:id="@+id/pages"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                tools:text="122 p."
+                />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
