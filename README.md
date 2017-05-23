@@ -18,7 +18,17 @@ Behind the standard RecyclerView classes, there is the data layer responsible fo
 ## Details view
 The details view immediately reuses the available data from the list item (title, author and now enlarged image thumb) and fetches more data like description and full size cover image in the background. 
 
+## Build
+
+This is a standard gradle project. Use gradlew assembleDebug or gradlew assembleRelease at the project root (./gradlew if under Linux or Mac). 
+
+## Quick preview
+
+The pre-build app is installable from Google Play Store from.
+
 ## Authorship
 This app has been initially implemented as the personal project of Audrius Meskauskas, Unterdorfwaeg 30, 8117 Switzlerland, stricly excluding any usage of any work time or equipment of his current employer. It is expected to be a community project where everyone could commit a pull request. The license is GPL 3.0. Linking is permitted with any proprietary or otherwise licensed third party libraries that come pre-installed in the Android device or ar required to interface with Google Books API.
+
+The licensing conditions of Google Books API can be found at https://developers.google.com/books/terms. 
 
 
