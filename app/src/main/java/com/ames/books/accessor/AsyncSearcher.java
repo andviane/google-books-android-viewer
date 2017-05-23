@@ -9,6 +9,7 @@ import com.ames.books.data.SearchResultListener;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.services.books.Books;
+import com.google.api.services.books.BooksRequestInitializer;
 
 import java.io.IOException;
 
@@ -16,6 +17,9 @@ import java.io.IOException;
  * The search module that takes the search query. It takes the search query and properly notifies the BookListActivity about the query results.
  */
 public class AsyncSearcher {
+  // The key is not fixed to the app signature. It is the official API key for this APP. Still maybe better to provide.
+  public static String API_KEY = "AIzaSyCjWRXuTr0xFXu1j9Qf3HOWSL-vIemEJE4";
+
   private static final String TAG = "books.search.list";
   public static final int ITEMS_PER_REQUEST = 10; // Specs says 40 max
   final SearchResultListener listener;
@@ -45,6 +49,7 @@ public class AsyncSearcher {
   private SearchBlock search(String query, int offset) {
     Books books = new Books.Builder(AndroidHttp.newCompatibleTransport(), AndroidJsonFactory.getDefaultInstance(), null)
        .setApplicationName(BuildConfig.APPLICATION_ID)
+       .setGoogleClientRequestInitializer(new BooksRequestInitializer(API_KEY))
        .build();
 
     try {

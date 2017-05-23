@@ -6,6 +6,8 @@ Android application that scrolls over Google Books, displaying cover images and 
 
 The app uses Google Books API to scroll over the list of content that is returned as search result. It consists of two screens (fragments). The list screen one allows to scroll over search results, showing only cover thumb image, header, author and page count. The details screen that opens after tapping anywhere on the book item reveals more information about the particular book. Use the back button for returning back to the list.
 
+If you just want quick preview, the Android app is available at https://play.google.com/store/apps/details?id=com.ames.books&rdid=com.ames.books
+
 # Architecture
 
 To only app activity controls the two fragments (list and details screens). 
