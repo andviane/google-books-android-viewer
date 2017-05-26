@@ -9,4 +9,5 @@
     <string name="book_cover">Book cover</string>
     <string name="search">Search</string>
     <string name="search_here">Search here</string>
+    <string name="get_it">Book\'s purchase link</string>
 </resources>

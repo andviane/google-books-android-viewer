@@ -57,6 +57,7 @@ public class BookListFragment extends Fragment implements SearchResultListener, 
         CharSequence query = input.getText();
         if (query != null && query.length() > 0) {
           Log.d(TAG, "Query [" + query + "]");
+          search.setEnabled(false);
           searchProgress.setVisibility(View.VISIBLE);
           searcher.doSearch(query.toString(), 0);
           hideKeyboard();
@@ -91,6 +92,7 @@ public class BookListFragment extends Fragment implements SearchResultListener, 
 
   @Override
   public void onQueryResult(SearchBlock books, String query) {
+    search.setEnabled(true);
     searchProgress.setVisibility(View.GONE);
     adapter.setBookList(books, query);
   }

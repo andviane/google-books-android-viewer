@@ -1,7 +1,9 @@
 package com.ames.books;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
@@ -17,6 +19,7 @@ import com.ames.books.accessor.DetailsLoader;
 import com.ames.books.accessor.DetailsLoadingResultListener;
 import com.ames.books.presenter.ShowDetailsListener;
 import com.google.api.client.repackaged.com.google.common.base.Joiner;
+import com.google.api.client.repackaged.com.google.common.base.Strings;
 import com.google.api.services.books.model.Volume;
 
 import java.util.ArrayList;
@@ -39,6 +42,9 @@ public class BookDetailsFragment extends Fragment implements ShowDetailsListener
   protected TextView description;
 
   protected ImageView picture;
+
+  protected TextView purchaseLink;
+  protected String purchaseUrl;
 
   protected DetailsLoader detailsLoader = new DetailsLoader(this);
   protected PicassoService picassoService = new PicassoService();
@@ -66,6 +72,22 @@ public class BookDetailsFragment extends Fragment implements ShowDetailsListener
 
     picture = (ImageView) view.findViewById(R.id.picture);
 
+    purchaseLink = (TextView) view.findViewById(R.id.purchase_link);
+
+    purchaseLink.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        try {
+          if (!Strings.isNullOrEmpty(purchaseUrl)) {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(purchaseUrl));
+            startActivity(browserIntent);
+          }
+        } catch (Exception e) {
+          Log.d(TAG, "Broken purchase URL " + purchaseLink);
+        }
+      }
+    });
+
     acceptState(savedInstanceState);
     return view;
   }
@@ -85,6 +107,11 @@ public class BookDetailsFragment extends Fragment implements ShowDetailsListener
         info.setPublishedDate(savedInstanceState.getString("d.pubdate"));
         info.setPublisher(savedInstanceState.getString("d.publisher"));
         info.setPageCount(savedInstanceState.getInt("d.pages"));
+
+        Volume.SaleInfo sale = new Volume.SaleInfo();
+        sale.setBuyLink(savedInstanceState.getString("d.buylink"));
+
+        vol.setSaleInfo(sale);
 
         Volume.VolumeInfo.ImageLinks links = new Volume.VolumeInfo.ImageLinks();
         links.setLarge(savedInstanceState.getString("d.cover", null));
@@ -120,6 +147,10 @@ public class BookDetailsFragment extends Fragment implements ShowDetailsListener
         outState.putStringArrayList("d.authors", new ArrayList<>(info.getAuthors()));
       } else {
         outState.putStringArrayList("d.authors", new ArrayList<String>());
+      }
+
+      if (current.getSaleInfo() != null) {
+        outState.putString("d.buylink", current.getSaleInfo().getBuyLink());
       }
 
       outState.putString("d.pubdate", info.getPublishedDate());
@@ -166,6 +197,8 @@ public class BookDetailsFragment extends Fragment implements ShowDetailsListener
       // otherwise the information is already populated
       onDetailsLoaded(book);
     }
+
+    setSaleInfo(current);
   }
 
   @Override
@@ -185,6 +218,8 @@ public class BookDetailsFragment extends Fragment implements ShowDetailsListener
   private void doOnDetailsLoaded(Volume details) {
     current = details;
     try {
+      setSaleInfo(current);
+
       Volume.VolumeInfo volume = details.getVolumeInfo();
       String subtitleText = volume.getSubtitle();
 
@@ -224,6 +259,18 @@ public class BookDetailsFragment extends Fragment implements ShowDetailsListener
       setCover(cover);
     } catch (Exception e) {
       Log.e(TAG, "loading failed", e);
+    }
+  }
+
+  private void setSaleInfo(Volume current) {
+    if (current.getSaleInfo() != null &&
+       !Strings.isNullOrEmpty(current.getSaleInfo().getBuyLink())) {
+      //purchaseLink.setText(current.getSaleInfo().getBuyLink());
+      purchaseUrl = current.getSaleInfo().getBuyLink();
+      purchaseLink.setVisibility(View.VISIBLE);
+    } else {
+      purchaseLink.setVisibility(View.GONE);
+      purchaseUrl = null;
     }
   }
 
