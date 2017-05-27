@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.ames.books.presenter.ShowDetailsListener;
+import com.ames.books.struct.Book;
 import com.google.api.services.books.model.Volume;
 
 /**
@@ -64,7 +65,7 @@ public class BookListActivity extends Activity implements ShowDetailsListener {
    * Hide list, show details and instruct the details view to show the selected book.
    */
   @Override
-  public void showDetails(Volume book, Drawable thumb) {
+  public void showDetails(Book book, Drawable thumb) {
     final FragmentManager fragmentManager = getFragmentManager();
     FragmentTransaction ft = fragmentManager.beginTransaction();
     BookDetailsFragment details = (BookDetailsFragment) fragmentManager.findFragmentById(R.id.book_details);

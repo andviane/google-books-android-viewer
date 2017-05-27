@@ -13,16 +13,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.ames.books.accessor.DetailsLoader;
 import com.ames.books.accessor.DetailsLoadingResultListener;
 import com.ames.books.presenter.ShowDetailsListener;
+import com.ames.books.struct.Book;
+import com.ames.books.struct.BookDetails;
 import com.google.api.client.repackaged.com.google.common.base.Joiner;
 import com.google.api.client.repackaged.com.google.common.base.Strings;
-import com.google.api.services.books.model.Volume;
-
-import java.util.ArrayList;
 
 /**
  * Fragment that represents the details of the book.
@@ -51,7 +51,9 @@ public class BookDetailsFragment extends Fragment implements ShowDetailsListener
 
   protected Drawable preloadedDrawable;
 
-  protected Volume current;
+  protected Book current;
+
+  protected ScrollView scrollView;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,6 +73,7 @@ public class BookDetailsFragment extends Fragment implements ShowDetailsListener
     pages = (TextView) view.findViewById(R.id.pages);
 
     picture = (ImageView) view.findViewById(R.id.picture);
+    scrollView = (ScrollView) view.findViewById(R.id.scroll_view);
 
     purchaseLink = (TextView) view.findViewById(R.id.purchase_link);
 
@@ -91,10 +94,10 @@ public class BookDetailsFragment extends Fragment implements ShowDetailsListener
     view.findViewById(R.id.search_about).setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        String terms = title.getText().toString().replace(' ','-')+
-           "+"+authors.getText().toString().replace(' ','+');
-        Log.d(TAG, "Searching for ["+terms+"]");
-        String url = "https://www.google.com/search?q="+terms;
+        String terms = title.getText().toString().replace(' ', '-') +
+           "+" + authors.getText().toString().replace(' ', '+');
+        Log.d(TAG, "Searching for [" + terms + "]");
+        String url = "https://www.google.com/search?q=" + terms;
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(browserIntent);
       }
@@ -106,35 +109,12 @@ public class BookDetailsFragment extends Fragment implements ShowDetailsListener
 
   private void acceptState(Bundle savedInstanceState) {
     if (savedInstanceState != null) {
-      Volume vol = new Volume();
-      vol.setId(savedInstanceState.getString("d.id", null));
-      Log.d(TAG, "Resumed id " + vol.getId());
-      if (vol.getId() != null) {
-        Volume.VolumeInfo info = new Volume.VolumeInfo();
-
-        info.setTitle(savedInstanceState.getString("d.title"));
-        info.setSubtitle(savedInstanceState.getString("d.subtitle"));
-        info.setDescription(savedInstanceState.getString("d.description"));
-        info.setAuthors(savedInstanceState.getStringArrayList("d.authors"));
-        info.setPublishedDate(savedInstanceState.getString("d.pubdate"));
-        info.setPublisher(savedInstanceState.getString("d.publisher"));
-        info.setPageCount(savedInstanceState.getInt("d.pages"));
-
-        Volume.SaleInfo sale = new Volume.SaleInfo();
-        sale.setBuyLink(savedInstanceState.getString("d.buylink"));
-
-        vol.setSaleInfo(sale);
-
-        Volume.VolumeInfo.ImageLinks links = new Volume.VolumeInfo.ImageLinks();
-        links.setLarge(savedInstanceState.getString("d.cover", null));
-        links.setSmallThumbnail(savedInstanceState.getString("d.thumb", null));
-        info.setImageLinks(links);
-        vol.setVolumeInfo(info);
-
+      current = (Book) savedInstanceState.getSerializable("current_details");
+      if (current != null) {
         // Picasa needs the placeholder.
-        showDetails(vol, getActivity().getDrawable(R.drawable.user_placeholder));
+        showDetails(current, getActivity().getDrawable(R.drawable.user_placeholder));
         // Try to set the thumb first. Full size image is sometimes not available.
-        setCover(links.getSmallThumbnail());
+        setCover(current.getSmallThumbnail());
       }
     }
   }
@@ -143,49 +123,26 @@ public class BookDetailsFragment extends Fragment implements ShowDetailsListener
   public void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
     if (current != null) {
-      outState.putString("d.id", current.getId());
-      Log.d(TAG, "Saved id " + current.getId());
-      Volume.VolumeInfo info = current.getVolumeInfo();
-      outState.putString("d.title", info.getTitle());
-      outState.putString("d.subtitle", info.getSubtitle());
-      outState.putString("d.description", info.getDescription());
-
-      if (info.getImageLinks() != null) {
-        outState.putString("d.cover", info.getImageLinks().getLarge());
-        outState.putString("d.thumb", info.getImageLinks().getSmallThumbnail());
-      }
-
-      if (info.getAuthors() != null) {
-        outState.putStringArrayList("d.authors", new ArrayList<>(info.getAuthors()));
-      } else {
-        outState.putStringArrayList("d.authors", new ArrayList<String>());
-      }
-
-      if (current.getSaleInfo() != null) {
-        outState.putString("d.buylink", current.getSaleInfo().getBuyLink());
-      }
-
-      outState.putString("d.pubdate", info.getPublishedDate());
-      outState.putString("d.publisher", info.getPublisher());
-      if (info.getPageCount() != null) {
-        outState.putInt("d.pages", info.getPageCount());
-      }
+      outState.putSerializable("current_details", current);
     }
   }
 
-  public void showDetails(Volume book, Drawable thumb) {
-    // Show mandatory info
+  public void showDetails(Book book, Drawable thumb) {
     Log.d(TAG, "Show details on " + book.getId());
-    current = book;
+    // Reset the scroll view if this is a different from previous book
+    if (current != null && !current.getId().equals(book.getId())) {
+      scrollView.scrollTo(0,0);
+    }
 
-    final Volume.VolumeInfo volume = book.getVolumeInfo();
-    title.setText(volume.getTitle());
-    if (volume.getAuthors() != null) {
-      authors.setText(Joiner.on(", ").join(volume.getAuthors()));
+    // Show mandatory info
+    current = book;
+    title.setText(book.getTitle());
+    if (book.getAuthors() != null) {
+      authors.setText(Joiner.on(", ").join(book.getAuthors()));
     } else {
       authors.setText(null);
     }
-    Integer count = volume.getPageCount();
+    Integer count = book.getPageCount();
     if (count != null) {
       String pageString = pages.getResources().getString(R.string.pages, count);
       pages.setText(pageString);
@@ -194,48 +151,46 @@ public class BookDetailsFragment extends Fragment implements ShowDetailsListener
     }
 
     preloadedDrawable = thumb;
+    setSaleInfo(current);
 
-    // Large image URL is only available when details are leaded.
-    if (volume.getImageLinks().getLarge() == null) {
-      picture.setImageDrawable(preloadedDrawable);
-      subtitle.setText(R.string.loading);
-
-      description.setText(null);
-      bottomLine.setText(null);
-
-      Log.d(TAG, "No cache, reloading...");
+    if (book.getDetails() == null) {
+      if (thumb != null) {
+        picture.setImageDrawable(thumb.getCurrent());
+      } else {
+        picture.setImageResource(R.drawable.user_placeholder);
+      }
       detailsLoader.doSearch(book);
     } else {
-      // otherwise the information is already populated
       onDetailsLoaded(book);
     }
-
-    setSaleInfo(current);
   }
 
   @Override
-  public void onDetailsLoaded(final Volume details) {
+  public void onDetailsLoaded(final Book bookWithDetails) {
     if (Looper.getMainLooper().getThread() != Thread.currentThread()) {
       getActivity().runOnUiThread(new Runnable() {
         @Override
         public void run() {
-          doOnDetailsLoaded(details);
+          doOnDetailsLoaded(bookWithDetails);
         }
       });
     } else {
-      doOnDetailsLoaded(details);
+      doOnDetailsLoaded(bookWithDetails);
     }
   }
 
-  private void doOnDetailsLoaded(Volume details) {
-    current = details;
+  private void doOnDetailsLoaded(Book book) {
+    current = book;
+    BookDetails details = book.getDetails();
+    if (details == null) {
+      return; // error on loading
+    }
+
     try {
       setSaleInfo(current);
+      String subtitleText = details.getSubtitle();
 
-      Volume.VolumeInfo volume = details.getVolumeInfo();
-      String subtitleText = volume.getSubtitle();
-
-      String desc = volume.getDescription();
+      String desc = details.getDescription();
       // Description is in HTML
       if (desc != null && !desc.isEmpty()) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -257,16 +212,13 @@ public class BookDetailsFragment extends Fragment implements ShowDetailsListener
         subtitle.setVisibility(View.GONE);
       }
 
-      if (volume.getPublisher() != null && volume.getPublishedDate() != null) {
-        bottomLine.setText(getString(R.string.bottom_line, volume.getPublisher(), volume.getPublishedDate()));
+      if (details.getPublisher() != null && details.getPublishedDate() != null) {
+        bottomLine.setText(getString(R.string.bottom_line, details.getPublisher(), details.getPublishedDate()));
       } else {
         bottomLine.setText(null);
       }
 
-      String cover = null;
-      if (volume.getImageLinks() != null) {
-        cover = volume.getImageLinks().getLarge();
-      }
+      String cover = details.getFullPicture();
 
       setCover(cover);
     } catch (Exception e) {
@@ -274,11 +226,11 @@ public class BookDetailsFragment extends Fragment implements ShowDetailsListener
     }
   }
 
-  private void setSaleInfo(Volume current) {
-    if (current.getSaleInfo() != null &&
-       !Strings.isNullOrEmpty(current.getSaleInfo().getBuyLink())) {
+  private void setSaleInfo(Book current) {
+    if (current.getDetails() != null &&
+       current.getDetails().getPurchaseUrl() != null) {
       //purchaseLink.setText(current.getSaleInfo().getBuyLink());
-      purchaseUrl = current.getSaleInfo().getBuyLink();
+      purchaseUrl = current.getDetails().getPurchaseUrl();
       purchaseLink.setVisibility(View.VISIBLE);
     } else {
       purchaseLink.setVisibility(View.GONE);

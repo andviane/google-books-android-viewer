@@ -4,6 +4,7 @@ package com.ames.books.data;
 import android.util.Log;
 
 import com.ames.books.accessor.AsyncSearcher;
+import com.ames.books.struct.Book;
 import com.google.api.services.books.model.Volume;
 
 import java.io.ByteArrayInputStream;
@@ -11,6 +12,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,7 +25,7 @@ import java.util.Iterator;
 public class BookData implements SearchResultListener {
   private static String TAG = "books.data";
 
-  private final ArrayList<SearchBlock> volumes = new ArrayList<>();
+  private ArrayList<SearchBlock> volumes = new ArrayList<>();
 
   private final ArrayList<SearchBlockPending> searches = new ArrayList<>();
 
@@ -59,9 +62,9 @@ public class BookData implements SearchResultListener {
   /**
    * Get book at position
    */
-  public Volume get(int position) {
+  public Book get(int position) {
     for (SearchBlock block : volumes) {
-      Volume vol = block.get(position);
+      Book vol = block.get(position);
       if (vol != null) {
         return vol;
       }
@@ -166,7 +169,7 @@ public class BookData implements SearchResultListener {
     Log.d(TAG, "Applyiing the state, size " + bytes.length);
 
     try {
-      DataInputStream din = new DataInputStream(new ByteArrayInputStream(bytes));
+      ObjectInputStream din = new ObjectInputStream(new ByteArrayInputStream(bytes));
       long version = din.readLong();
 
       if (version != stateSerializationVersion) {
@@ -175,15 +178,11 @@ public class BookData implements SearchResultListener {
       }
 
       query = din.readUTF();
-
-      int vols = din.readInt();
-      for (int v = 0; v < vols; v++) {
-        SearchBlock block = new SearchBlock();
-        block.readState(din);
-        volumes.add(block);
+      volumes = (ArrayList<SearchBlock>) din.readObject();
+      for (SearchBlock block: volumes) {
         size = Math.max(size, block.getTotalItems());
       }
-    } catch (IOException e) {
+    } catch (Exception e) {
       Log.e(TAG, "Failed to set the state", e);
     }
   }
@@ -196,17 +195,14 @@ public class BookData implements SearchResultListener {
     byte[] output;
     try {
       ByteArrayOutputStream out = new ByteArrayOutputStream();
-      DataOutputStream dout = new DataOutputStream((out));
+      ObjectOutputStream dout = new ObjectOutputStream((out));
       dout.writeLong(stateSerializationVersion);
       if (query != null) {
         dout.writeUTF(query);
       } else {
         dout.writeUTF("");
       }
-      dout.writeInt(volumes.size());
-      for (SearchBlock block : volumes) {
-        block.writeState(dout);
-      }
+      dout.writeObject(volumes);
       dout.close();
       output = out.toByteArray();
       Log.d(TAG, "Stated saved " + output.length + " bytes");

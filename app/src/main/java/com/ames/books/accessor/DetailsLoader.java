@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.ames.books.BuildConfig;
+import com.ames.books.struct.Book;
+import com.ames.books.struct.BookDetails;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.services.books.Books;
@@ -23,18 +25,16 @@ public class DetailsLoader {
     this.listener = listener;
   }
 
-  public void doSearch(final Volume query) {
-    new AsyncTask<Volume, Void, Volume>() {
+  public void doSearch(final Book query) {
+    new AsyncTask<Book, Void, Book>() {
 
       @Override
-      protected Volume doInBackground(Volume... params) {
+      protected Book doInBackground(Book... params) {
         return search(params[0]);
       }
 
       @Override
-      protected void onPostExecute(Volume book) {
-        // Merge also with the previous result. We are on UI thread, safe to merge.
-        query.putAll(book);
+      protected void onPostExecute(Book book) {
         listener.onDetailsLoaded(book);
       }
     }.execute(query);
@@ -43,15 +43,20 @@ public class DetailsLoader {
   /**
    * Main search method, runs outside UI thread.
    */
-  private Volume search(Volume query) {
+  private Book search(Book query) {
     Books books = new Books.Builder(AndroidHttp.newCompatibleTransport(), AndroidJsonFactory.getDefaultInstance(), null)
        .setApplicationName(BuildConfig.APPLICATION_ID)
        .build();
 
     try {
       // Executes the query
+      Log.d(TAG, "Fetching details for "+query.getId());
       Books.Volumes.Get get = books.volumes().get(query.getId());
-      return get.execute();
+      final Volume execute = get.execute();
+      BookDetails details = new BookDetails(execute);
+      query.setDetails(details);
+      Log.d(TAG, "Details loaded " + details.getSubtitle());
+      return query;
     } catch (IOException e) {
       Log.e(TAG, "IO ex", e);
       return query;

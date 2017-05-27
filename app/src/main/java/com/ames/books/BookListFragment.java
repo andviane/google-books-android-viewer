@@ -20,6 +20,7 @@ import com.ames.books.data.SearchBlock;
 import com.ames.books.data.SearchResultListener;
 import com.ames.books.presenter.BookListAdapter;
 import com.ames.books.presenter.ShowDetailsListener;
+import com.ames.books.struct.Book;
 import com.google.api.services.books.model.Volume;
 
 /**
@@ -114,7 +115,7 @@ public class BookListFragment extends Fragment implements SearchResultListener, 
    * We pass to activity first as the activity controls fragment visibility
    */
   @Override
-  public void showDetails(Volume book, Drawable thumb) {
+  public void showDetails(Book book, Drawable thumb) {
     hideKeyboard();
     searchProgress.setVisibility(View.GONE);
     Activity activity = getActivity();

@@ -6,12 +6,19 @@ import android.util.Log;
 import com.ames.books.BuildConfig;
 import com.ames.books.data.SearchBlock;
 import com.ames.books.data.SearchResultListener;
+import com.ames.books.struct.Book;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.services.books.Books;
 import com.google.api.services.books.BooksRequestInitializer;
+import com.google.api.services.books.model.Volume;
+import com.google.api.services.books.model.Volumes;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.ames.books.R.id.books;
 
 /**
  * The search module that takes the search query. It takes the search query and properly notifies the BookListActivity about the query results.
@@ -57,12 +64,22 @@ public class AsyncSearcher {
       Books.Volumes.List list = books.volumes().list(query);
       list.setMaxResults(Long.valueOf(ITEMS_PER_REQUEST));
       list.setStartIndex(Long.valueOf(offset));
-      list.setFields("totalItems,items(volumeInfo(title,authors,pageCount,imageLinks/smallThumbnail),selfLink,id)");
-      return new SearchBlock(list.execute(), offset);
+      list.setFields("totalItems,items(volumeInfo(title,authors,pageCount,imageLinks/smallThumbnail),id)");
+      final Volumes execution = list.execute();
+      return new SearchBlock(convert(execution), execution.getTotalItems(), offset);
     } catch (IOException e) {
       Log.e(TAG, "IO ex", e);
       return null;
     }
+  }
+
+  private com.ames.books.struct.Books convert(Volumes volumes) {
+    List<Volume> vols = volumes.getItems();
+    com.ames.books.struct.Books books = new com.ames.books.struct.Books(vols.size());
+    for (Volume vol: vols) {
+      books.add(new Book(vol));
+    }
+    return books;
   }
 
   public int getItemsPerRequest() {

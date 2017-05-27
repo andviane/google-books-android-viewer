@@ -1,12 +1,12 @@
 package com.ames.books.accessor;
 
-import com.google.api.services.books.model.Volume;
+import com.ames.books.struct.Book;
 
 /**
  * Accepts notification that some result has been loaded.
  */
 public interface DetailsLoadingResultListener {
 
-  void onDetailsLoaded(Volume details);
+  void onDetailsLoaded(Book details);
 
 }

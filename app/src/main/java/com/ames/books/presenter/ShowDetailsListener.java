@@ -2,6 +2,7 @@ package com.ames.books.presenter;
 
 import android.graphics.drawable.Drawable;
 
+import com.ames.books.struct.Book;
 import com.google.api.services.books.model.Volume;
 
 /**
@@ -12,5 +13,5 @@ public interface ShowDetailsListener {
   /**
    * Show details about the given book.
    */
-  void showDetails(Volume book, Drawable thumb);
+  void showDetails(Book book, Drawable thumb);
 }
