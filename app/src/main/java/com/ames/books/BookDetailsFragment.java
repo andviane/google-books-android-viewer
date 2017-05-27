@@ -88,6 +88,18 @@ public class BookDetailsFragment extends Fragment implements ShowDetailsListener
       }
     });
 
+    view.findViewById(R.id.search_about).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        String terms = title.getText().toString().replace(' ','-')+
+           "+"+authors.getText().toString().replace(' ','+');
+        Log.d(TAG, "Searching for ["+terms+"]");
+        String url = "https://www.google.com/search?q="+terms;
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(browserIntent);
+      }
+    });
+
     acceptState(savedInstanceState);
     return view;
   }
