@@ -2,7 +2,6 @@ package com.ames.books;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,7 +20,6 @@ import com.ames.books.data.SearchResultListener;
 import com.ames.books.presenter.BookListAdapter;
 import com.ames.books.presenter.ShowDetailsListener;
 import com.ames.books.struct.Book;
-import com.google.api.services.books.model.Volume;
 
 /**
  * Fragment that shows the list of books.
@@ -103,12 +101,14 @@ public class BookListFragment extends Fragment implements SearchResultListener, 
    */
   protected void hideKeyboard() {
     Activity activity = getActivity();
-    InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-    View view = activity.getCurrentFocus();
-    if (view == null) {
-      view = new View(activity);
+    if (activity != null) {
+      InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+      View view = activity.getCurrentFocus();
+      if (view == null) {
+        view = new View(activity);
+      }
+      imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
-    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
   }
 
   /**

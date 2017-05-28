@@ -13,12 +13,20 @@ import com.google.api.services.books.model.Volume;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static com.squareup.picasso.Picasso.with;
+import static java.lang.System.load;
 
 /**
  * Represents a singe record of the single book.
  */
 public class BookViewHolder extends RecyclerView.ViewHolder {
   private static final String TAG = "ames.books.bvh";
+
+  private static final ExecutorService executors = Executors.newSingleThreadExecutor();
+
   /**
    * The book currently being displayed
    */
@@ -28,6 +36,8 @@ public class BookViewHolder extends RecyclerView.ViewHolder {
   private final TextView authors;
   private final TextView pages;
   private final ImageView picture;
+
+  private Picasso picasso;
 
   public BookViewHolder(View itemView, final ShowDetailsListener showDetailsListener) {
     super(itemView);
@@ -46,6 +56,10 @@ public class BookViewHolder extends RecyclerView.ViewHolder {
         }
       }
     });
+
+    Picasso.Builder builder = new Picasso.Builder(picture.getContext());
+    builder.executor(executors);
+    picasso = builder.build();
   }
 
   public void setBook(Book book) {
@@ -67,9 +81,7 @@ public class BookViewHolder extends RecyclerView.ViewHolder {
   private void setPicture(String thumb) {
     boolean loading = false;
     if (thumb != null && !thumb.isEmpty()) {
-
-      Picasso.with(picture.getContext())
-         .load(thumb)
+      picasso.load(thumb)
          .placeholder(R.drawable.user_placeholder)
          .error(R.drawable.user_placeholder_error)
          .into(picture);
