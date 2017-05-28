@@ -1,3 +1,7 @@
+This book covers code inluded in this project, client side. The terms
+of using Google Books API can be found at https://developers.google.com/books/terms
+Among other things, it does not allow to charge a fee for using the app. 
+
 As an exception from the license below, it is allowed to use libraries
 under Apache license, any version, as well as call code that is understood as
 part of the Android operating system and is factory-shipped with the 
