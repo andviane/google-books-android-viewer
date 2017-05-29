@@ -75,8 +75,13 @@ public class BookData implements SearchResultListener {
 
   public void setBookList(SearchBlock block, String query) {
     volumes.clear();
-    volumes.add(block);
-    size = block.getTotalItems();
+    if (block != null) {
+      volumes.add(block);
+      size = block.getTotalItems();
+    } else {
+      size = 0;
+    }
+
     this.query = query;
     searches.clear();
     listener.notifyDataChanged();

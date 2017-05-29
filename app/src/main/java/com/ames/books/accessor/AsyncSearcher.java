@@ -15,10 +15,7 @@ import com.google.api.services.books.model.Volume;
 import com.google.api.services.books.model.Volumes;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-
-import static com.ames.books.R.id.books;
 
 /**
  * The search module that takes the search query. It takes the search query and properly notifies the BookListActivity about the query results.
@@ -74,12 +71,16 @@ public class AsyncSearcher {
   }
 
   private com.ames.books.struct.Books convert(Volumes volumes) {
-    List<Volume> vols = volumes.getItems();
-    com.ames.books.struct.Books books = new com.ames.books.struct.Books(vols.size());
-    for (Volume vol: vols) {
-      books.add(new Book(vol));
+    if (volumes != null && volumes.getItems() != null) {
+      List<Volume> vols = volumes.getItems();
+      com.ames.books.struct.Books books = new com.ames.books.struct.Books(vols.size());
+      for (Volume vol : vols) {
+        books.add(new Book(vol));
+      }
+      return books;
+    } else {
+      return new com.ames.books.struct.Books(1);
     }
-    return books;
   }
 
   public int getItemsPerRequest() {
