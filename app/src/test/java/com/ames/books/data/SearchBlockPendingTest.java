@@ -1,5 +1,8 @@
 package com.ames.books.data;
 
+import com.ames.books.struct.Book;
+import com.ames.books.struct.Books;
+import com.google.api.services.books.model.Volume;
 import com.google.api.services.books.model.Volumes;
 
 import org.junit.Test;
@@ -36,7 +39,7 @@ public class SearchBlockPendingTest {
     when(items.size()).thenReturn(5); // make 5 items size
     volumes.setItems(items);
 
-    SearchBlock block = new SearchBlock(volumes, 10); // [10 .. 15[
+    SearchBlock block = searchBlock(volumes, 10); // [10 .. 15[
     SearchBlockPending low = new SearchBlockPending(1, 12);
     SearchBlockPending exact = new SearchBlockPending(10, 15);
     SearchBlockPending high = new SearchBlockPending(12, 20);
@@ -44,5 +47,20 @@ public class SearchBlockPendingTest {
     assertFalse(low.isCoveredBy(block));
     assertTrue(exact.isCoveredBy(block));
     assertFalse(high.isCoveredBy(block));
+  }
+
+  public static SearchBlock searchBlock(Volumes v, int ofs) {
+    Books books = new Books(v.getItems().size());
+    for (int i = 0; i < v.getItems().size(); i++) {
+      Volume from = v.getItems().get(i);
+      String id = "id" + i;
+
+      if (from != null && from.getId() != null) {
+        id = from.getId();
+      }
+      Book book = new Book(id, "t", null, 0, "");
+      books.add(book);
+    }
+    return new SearchBlock(books, v.getTotalItems(), ofs);
   }
 }

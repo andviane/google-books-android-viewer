@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -33,19 +34,23 @@ public class SearchBlockTest {
 
   @Test
   public void testGet() {
-    SearchBlock block = new SearchBlock(volumes, 10); // [10 .. 15[
+    SearchBlock block = SearchBlockPendingTest.searchBlock(volumes, 10); // [10 .. 15[
     Volume v1 = new Volume();
     Volume v2 = new Volume();
+
+    v1.setId("id0");
+    v2.setId("id4");
+
     when(items.get(0)).thenReturn(v1);
     when(items.get(4)).thenReturn(v2);
 
-    assertSame(v1, block.get(10));
-    assertSame(v2, block.get(14));
+    assertEquals(v1.getId(), block.get(10).getId());
+    assertEquals(v2.getId(), block.get(14).getId());
   }
 
   @Test
   public void testInRange() {
-    SearchBlock block = new SearchBlock(volumes, 10); // [10 .. 15[
+    SearchBlock block = SearchBlockPendingTest.searchBlock(volumes, 10); // [10 .. 15[
     Volume v1 = new Volume();
     Volume v2 = new Volume();
     when(items.get(0)).thenReturn(v1);

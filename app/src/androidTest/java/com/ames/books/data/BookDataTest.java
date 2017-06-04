@@ -3,6 +3,8 @@ package com.ames.books.data;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.ames.books.accessor.AsyncSearcher;
+import com.ames.books.struct.Book;
+import com.ames.books.struct.Books;
 import com.google.api.services.books.model.Volume;
 import com.google.api.services.books.model.Volumes;
 
@@ -26,15 +28,12 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(AndroidJUnit4.class)
 public class BookDataTest {
-  Volume a1 = new Volume();
-  Volume a2 = new Volume();
-  Volume b1 = new Volume();
+  Book a1 = new Book("a1", "ta1", null, 0, "");
+  Book a2 = new Book("a2", "ta2", null, 0, "");
+  Book b1 = new Book("b1", "tb1", null, 0, "");
 
-  Volumes v1;
-  Volumes v2;
-
-  ArrayList<Volume> it1 = mock(ArrayList.class);
-  ArrayList<Volume> it2 = mock(ArrayList.class);
+  Books v1;
+  Books v2;
 
   SearchBlock s1;
   SearchBlock s2;
@@ -45,28 +44,30 @@ public class BookDataTest {
 
   @Before
   public void setup() {
+
     // Two data sets, size 5
-    when(it1.size()).thenReturn(5);
-    when(it2.size()).thenReturn(5);
+    v1 = new Books(5);
+    v1.add(a1);
+    v1.add(a2);
 
-    when(it1.get(0)).thenReturn(a1);
-    when(it1.get(1)).thenReturn(a2);
-    when(it2.get(0)).thenReturn(b1);
+    while (v1.size() < 5) {
+      v1.add(null);
+    }
 
-    v1 = new Volumes();
-    v1.setItems(it1);
-
-    v2 = new Volumes();
-    v2.setItems(it2);
-
-    v1.setTotalItems(100);
-    v2.setTotalItems(4); // Less, and 100 must be returned.
+    v2 = new Books(5);
+    v2.add(b1);
+    while (v2.size() < 5) {
+      v2.add(null);
+    }
 
     // Make the two blocks lying one next another in intervals 0 .. 5 and 5 .. 10
-    s1 = new SearchBlock(v1, 0);
-    s2 = new SearchBlock(v2, 5);
+    s1 = searchBlock(v1, 100, 0);
+    s2 = searchBlock(v2, 4, 5); // Less, and 100 must be returned.
   }
 
+  public static SearchBlock searchBlock(Books books, int total, int ofs) {
+    return new SearchBlock(books, total, ofs);
+  }
 
   @Test
   public void testGet() {

@@ -7,6 +7,8 @@ import android.support.test.runner.AndroidJUnit4;
 import android.widget.ImageView;
 
 import com.ames.books.accessor.DetailsLoader;
+import com.ames.books.struct.Book;
+import com.ames.books.struct.BookDetails;
 import com.google.api.services.books.model.Volume;
 
 import org.junit.Before;
@@ -70,7 +72,10 @@ public class BookDetailsFragmentTest {
 
     book.setVolumeInfo(info);
 
-    activity.showDetails(book, thumb);
+    Book rb = new Book(book);
+    rb.setDetails(new BookDetails(book));
+
+    activity.showDetails(rb, thumb);
 
     // Verify main title changed
     onView(withId(R.id.title)).check(matches(withText("The title of my book")));
