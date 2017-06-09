@@ -7,5 +7,5 @@
 .externalNativeBuild
 app/build
 app/libs
-
+*.apk
 api_key.txt
