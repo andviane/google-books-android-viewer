@@ -33,7 +33,7 @@ The model itself fetches requests using your class that must implement the [Prim
 
 To show the new data, simply call setQuery on the [UncoveringDataModel](uncover/src/main/java/ames/com/uncover/UncoveringDataModel.java). This method accepts the [Query](uncover/src/main/java/ames/com/uncover/primary/Query.java) that is passed to your [PrimaryDataProvider](uncover/src/main/java/ames/com/uncover/primary/PrimaryDataProvider.java). To be notified about the new data that the view must display, register the data listener as it is seen in [BookListAdapter](app/src/main/java/com/ames/books/presenter/BookListAdapter.java) class.
 
-Model also provides methods to get and set the state as Serializable. This is for saving instance state in cases like device reorientation; not for long term storage. Memory trimming is supported, see [BookListActivity](master/app/src/main/java/com/ames/books/BookListActivity.java).   
+Model also provides methods to get and set the state as Serializable. This is for saving instance state in cases like device reorientation; not for long term storage. Memory trimming is supported, see [BookListActivity](app/src/main/java/com/ames/books/BookListActivity.java).   
 
 The source code of this library is located under the uncover folder. Use ../gradlew assembleRelease in this folder to build the .aar file if required. 
 
