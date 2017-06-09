@@ -1,4 +1,4 @@
-# The content of this project
+# Android infinite scrolling lists are now both easy and efficient
 
 This project is a proof of concept demonstrator of Uncover library that provides easy bridging between [RecyclerView](https://developer.android.com/reference/android/support/v7/widget/RecyclerView.html) or similar data model (synchronous access to single item by its index) and the typical web or database request that strongly favours asynchronous access in chunks (pages of the fixed size). It performs multiple management optimizations on how these pages should be fetched and prioritized. The library is available in the Uncover folder under Apache 2.0 license. 
 
@@ -12,7 +12,7 @@ If you just want quick preview, the Android app is available at [PlayStore](http
 
 # Uncover library
 
-The proposed library is centered around the data model (UncoveringDataModel) that can be relatively easily tied to the data model of any UI list. This model provides item values by position, as well as the total number of items:
+The proposed library is centered around the data model [UncoveringDataModel](uncover/src/main/java/ames/com/uncover/UncoveringDataModel.java) that can be relatively easily tied to the data model of any UI list. This model provides item values by position, as well as the total number of items:
 ```java
     // Construction
     UncoveringDataModel<Book> model = new UncoveringDataModel<Book>();
@@ -27,13 +27,13 @@ The proposed library is centered around the data model (UncoveringDataModel) tha
     data.setQuery(new Query(query));
 ```    
 
-See the BookListAdapter class for the finished, runnable code.
+See the [BookListAdapter](app/src/main/java/com/ames/books/presenter/BookListAdapter.java) class for the finished, runnable code.
 
-The model itself fetches requests using your class that must implement the PrimaryDataProvider. It requests data asynchronuosly, in non-overapping chunks of the fixed (configurable) size, and prioritizes recent requests over older ones. While parallel requests are possible, they are under control: the maximal number is configurable (at most two are allowed by default).
+The model itself fetches requests using your class that must implement the [PrimaryDataProvider](uncover/src/main/java/ames/com/uncover/primary/PrimaryDataProvider). It requests data asynchronuosly, in non-overapping chunks of the fixed (configurable) size, and prioritizes recent requests over older ones. While parallel requests are possible, they are under control: the maximal number is configurable (at most two are allowed by default).
 
-To show the new data, simply call setQuery on the UncoveringDataModel. This method accepts the Query that is passed to your PrimaryDataProvider. To be notified about the new data that the view must display, register the data listener as it is seen in BookListAdapter class.
+To show the new data, simply call setQuery on the [UncoveringDataModel](uncover/src/main/java/ames/com/uncover/UncoveringDataModel.java). This method accepts the [Query](uncover/src/main/java/ames/com/uncover/primary/Query) that is passed to your [PrimaryDataProvider](uncover/src/main/java/ames/com/uncover/primary/PrimaryDataProvider). To be notified about the new data that the view must display, register the data listener as it is seen in [BookListAdapter](app/src/main/java/com/ames/books/presenter/BookListAdapter.java) class.
 
-Model also provides methods to get and set the state as Serializable. This is for saving instance state in cases like device reorientation; not for long term storage. Memory trimming is supported, see BookListActivity.   
+Model also provides methods to get and set the state as Serializable. This is for saving instance state in cases like device reorientation; not for long term storage. Memory trimming is supported, see [BookListActivity](master/app/src/main/java/com/ames/books/BookListActivity.java).   
 
 The source code of this library is located under the uncover folder. Use ../gradlew assembleRelease in this folder to build the .aar file if required. 
 
