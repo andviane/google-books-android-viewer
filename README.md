@@ -1,8 +1,8 @@
-# Android infinite scrolling lists are now both easy and efficient
+# Infinite scrolling lists are both easy and efficient
 
 ![Screen shot](https://raw.githubusercontent.com/andviane/google-books-android-viewer/master/info/sc1_sm.png "Our proof of concept app")
 
-This project is a proof of concept demonstrator of Uncover library that provides easy bridging between [RecyclerView](https://developer.android.com/reference/android/support/v7/widget/RecyclerView.html) or similar data model (synchronous access to single item by its index) and the typical web or database request that strongly favours asynchronous access in chunks (pages of the fixed size). It performs multiple management optimizations on how these pages should be fetched and prioritized. The library is available in the Uncover folder under Apache 2.0 license. 
+This project is a proof of concept demonstrator of Uncover library for Android. This library provides easy bridging between [RecyclerView](https://developer.android.com/reference/android/support/v7/widget/RecyclerView.html) or similar data model (synchronous access to single item by its index) and the typical web or database request that strongly favours asynchronous access in chunks (pages of the fixed size). It performs multiple management optimizations on how these pages should be fetched and prioritized. The library is available in the Uncover folder under Apache 2.0 license. 
 
 To demonstrate the library capabilities, the project provides Android application to demonstrate the "infinite scroll" over Google Books, displaying cover images and titles. This application is available under GPL v3.0.
 
