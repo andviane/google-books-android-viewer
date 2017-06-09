@@ -3,20 +3,19 @@ package com.ames.books;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.ComponentCallbacks2;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.ames.books.presenter.ShowDetailsListener;
 import com.ames.books.struct.Book;
-import com.google.api.services.books.model.Volume;
 
 /**
  * The main activity of the application
  */
 public class BookListActivity extends Activity implements ShowDetailsListener {
   private static final String TAG = "books.Booklist";
-  private boolean onList;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +28,7 @@ public class BookListActivity extends Activity implements ShowDetailsListener {
     if (savedInstanceState != null) {
       // hot start
       boolean list = savedInstanceState.getBoolean("a.list", true);
-      Log.d(TAG, "list "+list);
+      Log.d(TAG, "list " + list);
       if (list) {
         showList();
       } else {
@@ -43,7 +42,9 @@ public class BookListActivity extends Activity implements ShowDetailsListener {
   @Override
   protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
-    outState.putBoolean("a.list", onList);
+    FragmentManager fragmentManager = getFragmentManager();
+    BookListFragment lf = (BookListFragment) fragmentManager.findFragmentById(R.id.book_list);
+    outState.putBoolean("a.list", lf.isVisible());
   }
 
   @Override
@@ -58,7 +59,6 @@ public class BookListActivity extends Activity implements ShowDetailsListener {
     ft.show(fragmentManager.findFragmentById(R.id.book_list));
     ft.hide(fragmentManager.findFragmentById(R.id.book_details));
     ft.commit();
-    onList = true;
   }
 
   /**
@@ -80,6 +80,22 @@ public class BookListActivity extends Activity implements ShowDetailsListener {
     ft.addToBackStack("details"); // Use the back button to return to the search list view.
 
     ft.commit();
-    onList = false;
+  }
+
+  @Override
+  public void onTrimMemory(int level) {
+    switch (level) {
+      case ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE:
+      case ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW:
+      case ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL:
+
+        Log.d(TAG, "Memory trimmed");
+        FragmentManager fragmentManager = getFragmentManager();
+        BookListFragment lf = (BookListFragment) fragmentManager.findFragmentById(R.id.book_list);
+        lf.adapter.getData().lowMemory();
+
+      default:
+        break;
+    }
   }
 }

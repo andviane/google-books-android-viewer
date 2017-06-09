@@ -6,22 +6,27 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ames.books.R;
-import com.ames.books.data.BookData;
-import com.ames.books.data.DataChangeListener;
-import com.ames.books.data.SearchBlock;
+import com.ames.books.accessor.BookDataProvider;
+import com.ames.books.struct.Book;
 
 import java.io.Serializable;
+
+import ames.com.uncover.DataChangeListener;
+import ames.com.uncover.UncoveringDataModel;
+import ames.com.uncover.primary.Query;
 
 /**
  * Adapter to wrap the list of book record.
  */
 public class BookListAdapter extends RecyclerView.Adapter<BookViewHolder> implements DataChangeListener {
-  private BookData data;
+  private UncoveringDataModel<Book> data;
   private ShowDetailsListener showDetailsListener;
 
   public BookListAdapter(ShowDetailsListener showDetailsListener) {
     this.showDetailsListener = showDetailsListener;
-    data = new BookData(this);
+    data = new UncoveringDataModel<>();
+    data.setPrimaryDataProvider(new BookDataProvider());
+    data.setDataAvailableListener(this);
   }
 
   @Override
@@ -33,7 +38,7 @@ public class BookListAdapter extends RecyclerView.Adapter<BookViewHolder> implem
 
   @Override
   public void onBindViewHolder(BookViewHolder holder, int position) {
-    holder.setBook(data.get(position));
+    holder.setBook(data.getItem(position));
   }
 
   @Override
@@ -44,27 +49,26 @@ public class BookListAdapter extends RecyclerView.Adapter<BookViewHolder> implem
   /**
    * Set the new book list that replaces the current book list.
    */
-  public void setBookList(SearchBlock bookList, String query) {
-    this.data.setBookList(bookList, query);
+  public void setQuery(String query) {
+    this.data.setQuery(new Query(query));
     notifyDataSetChanged();
-  }
-
-  @Override
-  public void notifyDataChanged() {
-    notifyDataSetChanged();
-  }
-
-  @Override
-  public void notifyRegionChanged(int from, int to) {
-    notifyItemRangeChanged(from, to - from);
   }
 
   public void setState(Serializable state) {
     data.setState(state);
-    notifyDataChanged();
+    notifyDataSetChanged();
   }
 
   public Serializable getState() {
     return data.getState();
+  }
+
+  @Override
+  public void dataChanged(int from, int to, int totalNumberOfItems) {
+    notifyItemRangeChanged(from, to - from);
+  }
+
+  public UncoveringDataModel<Book> getData() {
+    return data;
   }
 }

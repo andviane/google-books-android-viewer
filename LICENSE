@@ -7,6 +7,10 @@ under Apache license, any version, as well as call code that is understood as
 part of the Android operating system and is factory-shipped with the 
 new Android device. 
 
+Finally,this license applies to all folders of this project with the 
+exception of Uncover library folder. Uncover library is available from
+the same owner under Apache 2.0 license.
+
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 

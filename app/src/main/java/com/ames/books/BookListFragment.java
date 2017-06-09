@@ -14,17 +14,18 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.ames.books.accessor.AsyncSearcher;
-import com.ames.books.data.SearchBlock;
-import com.ames.books.data.SearchResultListener;
 import com.ames.books.presenter.BookListAdapter;
 import com.ames.books.presenter.ShowDetailsListener;
 import com.ames.books.struct.Book;
 
+import ames.com.uncover.DataChangeListener;
+import ames.com.uncover.primary.Query;
+import ames.com.uncover.primary.SearchCompleteListener;
+
 /**
  * Fragment that shows the list of books.
  */
-public class BookListFragment extends Fragment implements SearchResultListener, ShowDetailsListener {
+public class BookListFragment extends Fragment implements ShowDetailsListener {
   private static final String TAG = "books.Booklist";
 
   protected RecyclerView books;
@@ -33,8 +34,6 @@ public class BookListFragment extends Fragment implements SearchResultListener, 
   protected EditText input;
   protected View searchProgress;
 
-  protected AsyncSearcher searcher = new AsyncSearcher(this);
-
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
@@ -42,6 +41,13 @@ public class BookListFragment extends Fragment implements SearchResultListener, 
 
     books = (RecyclerView) view.findViewById(R.id.books);
     adapter = new BookListAdapter(this);
+    adapter.getData().setSearchCompleteListener(new SearchCompleteListener() {
+      @Override
+      public void onQuerySearchComplete(Query query) {
+        search.setEnabled(true);
+        searchProgress.setVisibility(View.GONE);
+      }
+    });
 
     books.setAdapter(adapter);
 
@@ -58,7 +64,7 @@ public class BookListFragment extends Fragment implements SearchResultListener, 
           Log.d(TAG, "Query [" + query + "]");
           search.setEnabled(false);
           searchProgress.setVisibility(View.VISIBLE);
-          searcher.doSearch(query.toString(), 0);
+          adapter.setQuery(query.toString());
           hideKeyboard();
         }
       }
@@ -87,13 +93,6 @@ public class BookListFragment extends Fragment implements SearchResultListener, 
   public void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
     outState.putSerializable("d.list.data", adapter.getState());
-  }
-
-  @Override
-  public void onQueryResult(SearchBlock books, String query) {
-    search.setEnabled(true);
-    searchProgress.setVisibility(View.GONE);
-    adapter.setBookList(books, query);
   }
 
   /**
