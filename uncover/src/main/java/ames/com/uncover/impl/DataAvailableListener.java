@@ -39,4 +39,10 @@ public interface DataAvailableListener<ITEM> {
    * @param response response
    */
   void dataAvailable(PrimaryRequest request, PrimaryResponse<ITEM> response);
+
+
+  /**
+   * Notify the fiven area is now visible, and data are very likely to be requested from here
+   */
+  void notifyVisibleArea(int fromInclusive, int endExclusive);
 }

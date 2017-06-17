@@ -180,6 +180,39 @@ public class DataFetchManagerTest {
   }
 
   @Test
+  public void testDiscardOverScrolledContent() throws Exception {
+    DataFetchManager<TestItem> fetcher = new DataFetchManager<>();
+    fetcher.setDataFetcher(primary);
+    fetcher.setDataModel(model);
+    fetcher.setDelayWhenPending(700);
+    fetcher.setThreads(1);
+
+    int pg2 = 2;
+    int pg10 = 10;
+    int pg20 = 20;
+    int pg50 = 50;
+
+    AvailableSegment<TestItem> s10 = new AvailableSegment<>(model, pg10);
+
+    fetcher.requestData(pg2);
+    fetcher.requestData(pg10);
+    fetcher.requestData(pg20);
+    fetcher.requestData(pg50);
+
+    assertTrue(fetcher.alreadyFetching(pg2));
+    assertTrue(fetcher.alreadyFetching(pg10));
+    assertTrue(fetcher.alreadyFetching(pg20));
+    assertTrue(fetcher.alreadyFetching(pg50));
+
+    fetcher.notifyVisibleArea(s10.getFrom(), s10.getTo());
+
+    assertTrue(fetcher.alreadyFetching(pg2));   // Already sent
+    assertTrue(fetcher.alreadyFetching(pg10));  // visible
+    assertFalse(fetcher.alreadyFetching(pg20)); // discardable
+    assertFalse(fetcher.alreadyFetching(pg50)); // discardable
+  }
+
+  @Test
   public void test100Channels() {
     DataFetchManager<TestItem> fetcher = new DataFetchManager<>();
     fetcher.setDataFetcher(primary);

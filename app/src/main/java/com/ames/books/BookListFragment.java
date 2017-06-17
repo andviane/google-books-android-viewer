@@ -18,7 +18,7 @@ import com.ames.books.presenter.BookListAdapter;
 import com.ames.books.presenter.ShowDetailsListener;
 import com.ames.books.struct.Book;
 
-import ames.com.uncover.DataChangeListener;
+import ames.com.uncover.impl.FetchOptimizer;
 import ames.com.uncover.primary.Query;
 import ames.com.uncover.primary.SearchCompleteListener;
 
@@ -41,13 +41,15 @@ public class BookListFragment extends Fragment implements ShowDetailsListener {
 
     books = (RecyclerView) view.findViewById(R.id.books);
     adapter = new BookListAdapter(this);
-    adapter.getData().setSearchCompleteListener(new SearchCompleteListener() {
+    adapter.getModel().setSearchCompleteListener(new SearchCompleteListener() {
       @Override
       public void onQuerySearchComplete(Query query) {
         search.setEnabled(true);
         searchProgress.setVisibility(View.GONE);
       }
     });
+
+    FetchOptimizer.install(view.getContext(), books, adapter);
 
     books.setAdapter(adapter);
 

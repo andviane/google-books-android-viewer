@@ -15,10 +15,14 @@ limitations under the License.
  */
 package ames.com.uncover;
 
+import android.support.v7.widget.LinearLayoutManager;
+
+import ames.com.uncover.UncoveringDataModel;
+
 /**
- * Data change listener is called on the view to be notified when the model is updated.
+ * Adapter that uses UncoveringDataModel as its data model.
  */
-public interface DataChangeListener {
+public interface UncoverAwareAdapter<T> {
 
   /**
    * Notify that data have changed withing the given range.
@@ -28,4 +32,8 @@ public interface DataChangeListener {
    * @param totalNumberOfItems total number of items in the list.
    */
   void dataChanged(int from, int to, int totalNumberOfItems);
+
+  void setLayoutManger(LinearLayoutManager manager);
+
+  UncoveringDataModel<T> getModel();
 }

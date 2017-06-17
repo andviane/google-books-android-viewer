@@ -26,6 +26,8 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import android.support.v7.widget.LinearLayoutManager;
+
 import ames.com.uncover.impl.AsyncBridge;
 import ames.com.uncover.impl.AvailableSegment;
 import ames.com.uncover.impl.DataFetchManager;
@@ -58,12 +60,18 @@ public class UncoveringDataModel<ITEM> {
    * The listener of the view or presenter that the model notifies when the data have changed
    * due update arrivals.
    */
-  private DataChangeListener dataAvailableListener;
+  private UncoverAwareAdapter dataAvailableListener;
 
   /**
    * The delegate where the model requests fetching the new data when needed.
    */
   private DataFetchManager dataFetcher;
+
+  /**
+   * Linear layout manager. It is not required to set this component, but if available,
+   * it is used to discard pending fetch requests already outside the visible area.
+   */
+  private LinearLayoutManager layoutManager;
 
   /**
    * Already available data items, maps page number to the data array.
@@ -78,6 +86,10 @@ public class UncoveringDataModel<ITEM> {
   private Query query;
 
   private SearchCompleteListener searchCompleteListener;
+
+  public boolean isFirstQueryResult() {
+    return firstQueryResult;
+  }
 
   /**
    * Tracks if the current "data available" call is the first result for this query.
@@ -121,7 +133,7 @@ public class UncoveringDataModel<ITEM> {
   /**
    * Set listener that receives notifications when data are loaded.
    */
-  public UncoveringDataModel setDataAvailableListener(DataChangeListener dataAvailableListener) {
+  public UncoveringDataModel setDataAvailableListener(UncoverAwareAdapter dataAvailableListener) {
     this.dataAvailableListener = dataAvailableListener;
     return this;
   }
@@ -246,6 +258,18 @@ public class UncoveringDataModel<ITEM> {
   }
 
   /**
+   * Optionally set layout manager to handle the expired areas.
+   */
+  public UncoveringDataModel setLayoutManager(LinearLayoutManager layoutManager) {
+    this.layoutManager = layoutManager;
+    return this;
+  }
+
+  public LinearLayoutManager getLayoutManager() {
+    return layoutManager;
+  }
+
+  /**
    * Set the state that is required to support Android life cycles.
    * If items are serializable, they are stored as part of state.
    */
@@ -259,7 +283,7 @@ public class UncoveringDataModel<ITEM> {
       loadingPlaceHolder = (ITEM) oin.readObject();
       firstQueryResult = oin.readBoolean();
       data = (Map<Integer, AvailableSegment<ITEM>>) oin.readObject();
-      for (AvailableSegment<ITEM> s: data.values()) {
+      for (AvailableSegment<ITEM> s : data.values()) {
         s.setModel(this);
       }
       oin.close();
@@ -304,5 +328,9 @@ public class UncoveringDataModel<ITEM> {
       Log.e(TAG, "Failed to write the state", e);
     }
     return bout.toByteArray();
+  }
+
+  public DataFetchManager getDataFetchManager() {
+    return dataFetcher;
   }
 }

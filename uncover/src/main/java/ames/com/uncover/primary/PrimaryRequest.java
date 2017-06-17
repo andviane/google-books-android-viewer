@@ -48,8 +48,19 @@ public class PrimaryRequest {
     return channel;
   }
 
+  public int page = -1;
+
   public PrimaryRequest setChannel(int channel) {
     this.channel = channel;
+    return this;
+  }
+
+  public int getPage() {
+    return page;
+  }
+
+  public PrimaryRequest setPage(int page) {
+    this.page = page;
     return this;
   }
 

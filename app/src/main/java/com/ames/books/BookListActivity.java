@@ -92,7 +92,7 @@ public class BookListActivity extends Activity implements ShowDetailsListener {
         Log.d(TAG, "Memory trimmed");
         FragmentManager fragmentManager = getFragmentManager();
         BookListFragment lf = (BookListFragment) fragmentManager.findFragmentById(R.id.book_list);
-        lf.adapter.getData().lowMemory();
+        lf.adapter.getModel().lowMemory();
 
       default:
         break;

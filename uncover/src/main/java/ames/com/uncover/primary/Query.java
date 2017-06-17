@@ -48,4 +48,8 @@ public class Query implements Serializable {
   public int hashCode() {
     return queryString != null ? queryString.hashCode() : 0;
   }
+
+  public String toString() {
+    return queryString;
+  }
 }

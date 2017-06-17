@@ -16,8 +16,10 @@ limitations under the License.
 package ames.com.uncover.impl;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Timer;
@@ -93,7 +95,10 @@ public class DataFetchManager<ITEM> implements DataAvailableListener<ITEM> {
    */
   public synchronized void requestData(int page) {
     AvailableSegment<ITEM> segment = new AvailableSegment<>(dataModel, page);
-    PrimaryRequest request = new PrimaryRequest(segment.getFrom(), segment.getTo(), dataModel.getQuery());
+    PrimaryRequest request = new PrimaryRequest(segment.getFrom(), segment.getTo(), dataModel.getQuery(),
+       dataModel.isFirstQueryResult());
+    request.setPage(segment.getPage());
+
     coverage.put(segment.getPage(), segment);
     queue.push(request);
 
@@ -147,6 +152,22 @@ public class DataFetchManager<ITEM> implements DataAvailableListener<ITEM> {
     }
   }
 
+  /**
+   * Notify the area that is currently visible. This can be called at any
+   * time to discard pending requests outside the visible area.
+   */
+  @Override
+  public void notifyVisibleArea(int fromInclusive, int endExclusive) {
+    Iterator<PrimaryRequest> iter = queue.iterator();
+    while (iter.hasNext()) {
+      PrimaryRequest request = iter.next();
+      if (request.getFrom() >= endExclusive || request.getTo() < fromInclusive) {
+        coverage.remove(request.getPage());
+        iter.remove();
+      }
+    }
+  }
+
   @Override
   public synchronized void dataUnavailable(PrimaryRequest request) {
     fetchInProcessing[request.getChannel()] = 0L;
@@ -175,7 +196,7 @@ public class DataFetchManager<ITEM> implements DataAvailableListener<ITEM> {
   /**
    * Serve pending tasks if the previous tasks have been already acknowledged
    * or takes too long. Only send one at time.
-   *
+   * <p>
    * This method is synchronized because also time thread may call it.
    */
   protected synchronized void servePending() {
