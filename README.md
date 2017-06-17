@@ -20,6 +20,8 @@ The app uses Google Books API to scroll over the list of content that is returne
 
 If you just want quick preview, the Android app is available at [PlayStore](https://play.google.com/store/apps/details?id=com.ames.books&rdid=com.ames.books)
 
+The app also fetches the book cover images that take much longer to appear. Image downloading and management is implemented with [Picaso](http://square.github.io/picasso/) and not directly related to the demonstration of Uncover library capabilities.
+
 # Uncover library
 
 The proposed library is centered around the data model [UncoveringDataModel](uncover/src/main/java/ames/com/uncover/UncoveringDataModel.java) that can be relatively easily tied to the data model of any UI list. This model provides item values by position, as well as the total number of items:
@@ -43,11 +45,11 @@ The model itself fetches requests using your class that must implement the [Prim
 
 To show the new data, simply call setQuery on the [UncoveringDataModel](uncover/src/main/java/ames/com/uncover/UncoveringDataModel.java). This method accepts the [Query](uncover/src/main/java/ames/com/uncover/primary/Query.java) that is passed to your [PrimaryDataProvider](uncover/src/main/java/ames/com/uncover/primary/PrimaryDataProvider.java). To be notified about the new data that the view must display, register the data listener as it is seen in [BookListAdapter](app/src/main/java/com/ames/books/presenter/BookListAdapter.java) class.
 
-To drop swiped-over pages from the queue, you need to install the FetchOptimizer:
+To drop swiped-over pages from the queue without fetching them, you need to install the [FetchOptimizer](uncover/src/main/java/ames/com/uncover/impl/FetchOptimizer.java):
 
     FetchOptimizer.install(context, recyclerView, adapter);
     
-This must be done when the in onCreate (for activity) or onCreateView (for a fragment), when context, view and its adapter are all available. Unlike for some other known solutions, you do not need to mess with MVC logic in your code to benefit from the visible area information.
+This must be done when the in onCreate (for activity) or onCreateView (for a fragment), when context, view and its adapter are all available. Unlike for some other known solutions, you do not need to mess with MVC logic in your code to benefit from the visible area information. The fetch optimizer is installed in [BookListFragment](app/src/main/java/com/ames/books/BookListFragment.java). 
 
 Model also provides methods to get and set the state as Serializable. This is for saving instance state in cases like device reorientation; not for long term storage. Memory trimming is supported, see [BookListActivity](app/src/main/java/com/ames/books/BookListActivity.java).   
 
