@@ -14,6 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
+
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier "source"
+}
 
 android {
     compileSdkVersion 25
@@ -23,7 +29,7 @@ android {
         minSdkVersion 9
         targetSdkVersion 25
         versionCode 2
-        versionName "1.2"
+        versionName "1.2-SNAPSHOT"
         setProperty("archivesBaseName", "uncover-$versionName")
     }
     buildTypes {
@@ -41,4 +47,60 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.10.19'
+}
+
+// Only this library is published
+// ../gradlew clean build publishMavenPublicationToMavenLocalRepository
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId 'io.github.andviane' 
+            artifactId 'uncover'
+            version android.defaultConfig.versionName
+            artifact(sourceJar)
+            artifact("$buildDir/outputs/aar/uncover-${android.defaultConfig.versionName}-release.aar")
+
+            pom.withXml {
+
+            def n = asNode();
+            n.appendNode('name', 'Uncover')
+            n.appendNode('description', 'Android library to bridge infinite scroller based on RecyclerView with slow asynchronous data source like web service or database')
+            n.appendNode('url', 'https://github.com/andviane/google-books-android-viewer')
+            def licenses = n.appendNode('licenses')
+            def apache = licenses.appendNode('license')
+            apache.appendNode('name', 'Apache License, Version 2.0')
+            apache.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+            apache.appendNode('distribution', 'repo')
+
+            def scm = n.appendNode('scm')  
+            scm.appendNode('url', 'https://github.com/andviane/google-books-android-viewer.git')
+
+            def dependenciesNode = asNode().appendNode('dependencies')
+
+            configurations.compile.allDependencies.each {
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', it.group)
+                        dependencyNode.appendNode('artifactId', it.name)
+                        dependencyNode.appendNode('version', it.version)
+            }
+            configurations.testCompile.allDependencies.each {
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', it.group)
+                        dependencyNode.appendNode('artifactId', it.name)
+                        dependencyNode.appendNode('version', it.version)
+                        dependencyNode.appendNode('scope', 'test')
+            }
+         }
+       }
+    }
+
+    repositories {
+        maven {
+          credentials {
+            username System.env.ANDVIANE_USERNAME
+            password System.env.ANDVIANE_PASSWORD
+          }
+          url 'https://oss.sonatype.org/content/repositories/snapshots'
+        }
+    }
 }
