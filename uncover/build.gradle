@@ -15,11 +15,7 @@ limitations under the License.
  */
 apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
-
-task sourceJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier "source"
-}
+apply plugin: 'signing'
 
 android {
     compileSdkVersion 25
@@ -29,7 +25,7 @@ android {
         minSdkVersion 9
         targetSdkVersion 25
         versionCode 2
-        versionName "1.2-SNAPSHOT"
+        versionName "1.2"
         setProperty("archivesBaseName", "uncover-$versionName")
     }
     buildTypes {
@@ -49,6 +45,16 @@ dependencies {
     testCompile 'org.mockito:mockito-core:1.10.19'
 }
 
+
+signing {
+    sign configurations.default
+    sign configurations.archives
+    sign file("$buildDir/publications/maven/pom-default.xml")
+    // Shame on that, but still looking for work around.
+    sign file("${project.gradle.gradleUserHomeDir}/../.m2/repository/io/github/andviane/uncover/maven-metadata.xml")
+}
+
+
 // Only this library is published
 // ../gradlew clean build publishMavenPublicationToMavenLocalRepository
 publishing {
@@ -57,8 +63,37 @@ publishing {
             groupId 'io.github.andviane' 
             artifactId 'uncover'
             version android.defaultConfig.versionName
+
             artifact(sourceJar)
+            artifact(javadocJar)
+            artifact("$buildDir/libs/uncover-${android.defaultConfig.versionName}-javadoc.jar.asc") {
+                classifier = 'javadoc' 
+                extension = 'jar.asc'
+                builtBy signArchives
+            }
+            artifact("$buildDir/libs/uncover-${android.defaultConfig.versionName}-source.jar.asc")  {
+                classifier = 'source' 
+                extension = 'jar.asc'
+                builtBy signArchives
+            }
+
+            artifact("$buildDir/publications/maven/pom-default.xml.asc")  {
+                extension = 'pom.asc'
+                classifier = null 
+                builtBy signDefault
+            }
+
+            artifact("${project.gradle.gradleUserHomeDir}/../.m2/repository/io/github/andviane/uncover/maven-metadata.xml.asc")  {
+                classifier = 'maven-metadata.xml' 
+                builtBy signDefault
+            }
+
             artifact("$buildDir/outputs/aar/uncover-${android.defaultConfig.versionName}-release.aar")
+            artifact("$buildDir/outputs/aar/uncover-${android.defaultConfig.versionName}-release.aar.asc")  {
+                classifier = 'aar' 
+                builtBy signDefault
+            }
+
 
             pom.withXml {
 
@@ -90,17 +125,52 @@ publishing {
                         dependencyNode.appendNode('version', it.version)
                         dependencyNode.appendNode('scope', 'test')
             }
+            def d = n.appendNode('developers')
+            def me = d.appendNode('developer')
+            me.appendNode('id', 'andviane')
+            me.appendNode('name', "Audrius Meskauskas")
+            me.appendNode('email', "mike.pukuotukas@meska.info")
+            me.appendNode('url', "https://ch.linkedin.com/in/audriusa")
+            def roles = me.appendNode('roles')
+            roles.appendNode('role', "architect")
+            roles.appendNode('role', "developer")
+            me.appendNode('timezone', 'utc')
          }
        }
     }
 
     repositories {
+        mavenLocal()
         maven {
           credentials {
             username System.env.ANDVIANE_USERNAME
             password System.env.ANDVIANE_PASSWORD
           }
-          url 'https://oss.sonatype.org/content/repositories/snapshots'
+          // url 'https://oss.sonatype.org/content/repositories/snapshots'
+          url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
         }
     }
 }
+
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier "source"
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourceJar
+}
+
+    
+
+
