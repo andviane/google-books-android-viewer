@@ -56,6 +56,120 @@ Model also provides methods to get and set the state as Serializable. This is fo
 
 The source code of this library is located under the uncover folder. Use ../gradlew assembleRelease in this folder to build the .aar file if required. 
 
+# Still too complex?
+
+What about the single Java class that does it all? Here is the class:
+
+```java
+package com.ames.uncoverguide;
+
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+
+import com.ames.uncover.UncoveringDataModel;
+import com.ames.uncover.primary.PrimaryDataProvider;
+import com.ames.uncover.primary.PrimaryRequest;
+import com.ames.uncover.primary.PrimaryResponse;
+import com.ames.uncover.primary.Query;
+
+
+public class MainActivity extends AppCompatActivity {
+  UncoveringDataModel<String> model;
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler);
+
+    model = new UncoveringDataModel<>();
+
+    model.setPrimaryDataProvider(new PrimaryDataProvider<String>() {
+      @Override
+      public PrimaryResponse fetch(PrimaryRequest primaryRequest) {
+        // Observe logs so see the fetching
+        Log.i("Fetch", "Fetch " + primaryRequest.getFrom() + "- " + primaryRequest.getTo());
+        pause();
+
+        ArrayList<String> data = new ArrayList<String>();
+
+        for (int p = primaryRequest.getFrom(); p < primaryRequest.getTo(); p++) {
+          data.add("Item " + p + " by " + primaryRequest.getQuery());
+        }
+        // Integer.MAX_VALUE items in total, enjoy scrolling
+        PrimaryResponse<String> r = new PrimaryResponse<String>(data, Integer.MAX_VALUE);
+        return r;
+      }
+
+      // Relax, we are on the background thread. This pause allows to watch optimizations.
+      private void pause() {
+        try {
+          Thread.sleep(200);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+    });
+
+    RecyclerView.Adapter adapter = new RecyclerView.Adapter() {
+
+      @Override
+      public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new RecyclerView.ViewHolder(new TextView(MainActivity.this)) {
+        };
+      }
+
+      @Override
+      public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        String content = model.getItem(position);
+        ((TextView) holder.itemView).setText(content);
+      }
+
+      @Override
+      public int getItemCount() {
+        return model.size();
+      }
+    };
+    model.install(recyclerView, adapter);
+
+    // Done, now just set the query to show. If we do not set the query, all we see is empty list
+    model.setQuery(new Query("abc"));
+  }
+}
+```
+
+This is off course totally "hello world", the primary data provider just bakes the data locally and the adapter is just a TextView. Only such a one page implementation demo should use inner class for data fetcher. But we included a short delay on getting the data, to demonstrate that while looks simple, this is still a call on another thread, fetching is still chunked, and requests to get these chunks are still optimized. 
+
+You also need a layout to make this compile:
+
+```java
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
+
+</LinearLayout>
+
+```
+
+With these two files, it is easy to build the app that is ready to run.
+
 # Note
 
 See also [the licensing conditions](https://developers.google.com/books/terms) of Google Books API. 
