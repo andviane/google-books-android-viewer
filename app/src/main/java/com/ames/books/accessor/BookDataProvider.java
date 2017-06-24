@@ -15,9 +15,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ames.com.uncover.primary.PrimaryDataProvider;
-import ames.com.uncover.primary.PrimaryRequest;
-import ames.com.uncover.primary.PrimaryResponse;
+import com.ames.uncover.primary.PrimaryDataProvider;
+import com.ames.uncover.primary.PrimaryRequest;
+import com.ames.uncover.primary.PrimaryResponse;
 
 /**
  * The search module that takes the search query. It takes the search query and properly notifies the BookListActivity about the query results.

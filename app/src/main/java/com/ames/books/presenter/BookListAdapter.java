@@ -1,6 +1,5 @@
 package com.ames.books.presenter;
 
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,14 +11,13 @@ import com.ames.books.struct.Book;
 
 import java.io.Serializable;
 
-import ames.com.uncover.UncoveringDataModel;
-import ames.com.uncover.UncoverAwareAdapter;
-import ames.com.uncover.primary.Query;
+import com.ames.uncover.UncoveringDataModel;
+import com.ames.uncover.primary.Query;
 
 /**
  * Adapter to wrap the list of book record.
  */
-public class BookListAdapter extends RecyclerView.Adapter<BookViewHolder> implements UncoverAwareAdapter<Book> {
+public class BookListAdapter extends RecyclerView.Adapter<BookViewHolder>  {
   private UncoveringDataModel<Book> data;
   private ShowDetailsListener showDetailsListener;
 
@@ -27,7 +25,6 @@ public class BookListAdapter extends RecyclerView.Adapter<BookViewHolder> implem
     this.showDetailsListener = showDetailsListener;
     data = new UncoveringDataModel<>();
     data.setPrimaryDataProvider(new BookDataProvider());
-    data.setDataAvailableListener(this);
   }
 
   @Override
@@ -35,10 +32,6 @@ public class BookListAdapter extends RecyclerView.Adapter<BookViewHolder> implem
     View thisItemsView = LayoutInflater.from(parent.getContext()).inflate(R.layout.book_item_layout,
        parent, false);
     return new BookViewHolder(thisItemsView, showDetailsListener);
-  }
-
-  public void setLayoutManger(LinearLayoutManager manager) {
-    data.setLayoutManager(manager);
   }
 
   @Override
@@ -66,11 +59,6 @@ public class BookListAdapter extends RecyclerView.Adapter<BookViewHolder> implem
 
   public Serializable getState() {
     return data.getState();
-  }
-
-  @Override
-  public void dataChanged(int from, int to, int totalNumberOfItems) {
-    notifyItemRangeChanged(from, to - from);
   }
 
   public UncoveringDataModel<Book> getModel() {

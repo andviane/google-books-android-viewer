@@ -18,9 +18,8 @@ import com.ames.books.presenter.BookListAdapter;
 import com.ames.books.presenter.ShowDetailsListener;
 import com.ames.books.struct.Book;
 
-import ames.com.uncover.impl.FetchOptimizer;
-import ames.com.uncover.primary.Query;
-import ames.com.uncover.primary.SearchCompleteListener;
+import com.ames.uncover.primary.Query;
+import com.ames.uncover.primary.SearchCompleteListener;
 
 /**
  * Fragment that shows the list of books.
@@ -49,9 +48,7 @@ public class BookListFragment extends Fragment implements ShowDetailsListener {
       }
     });
 
-    FetchOptimizer.install(view.getContext(), books, adapter);
-
-    books.setAdapter(adapter);
+    adapter.getModel().install(books, adapter);
 
     input = (EditText) view.findViewById(R.id.search);
     search = (Button) view.findViewById(R.id.search_button);

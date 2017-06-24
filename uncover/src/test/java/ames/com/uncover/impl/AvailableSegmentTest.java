@@ -18,8 +18,10 @@ package ames.com.uncover.impl;
 import org.junit.Before;
 import org.junit.Test;
 
-import ames.com.uncover.TestItem;
-import ames.com.uncover.UncoveringDataModel;
+import com.ames.uncover.TestItem;
+import com.ames.uncover.impl.AvailableSegment;
+
+import com.ames.uncover.UncoveringDataModel;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;

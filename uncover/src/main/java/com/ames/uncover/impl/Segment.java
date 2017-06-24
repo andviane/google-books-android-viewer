@@ -13,11 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package ames.com.uncover.impl;
+package com.ames.uncover.impl;
 
 import java.io.Serializable;
 
-import ames.com.uncover.UncoveringDataModel;
+import com.ames.uncover.UncoveringDataModel;
 
 /**
  * Represents the range (interval) of items, but does not include items themselves. The class is used directly to store the

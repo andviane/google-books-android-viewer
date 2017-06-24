@@ -39,17 +39,18 @@ The proposed library is centered around the data model [UncoveringDataModel](unc
     data.setQuery(new Query(query));
 ```    
 
-See the [BookListAdapter](app/src/main/java/com/ames/books/presenter/BookListAdapter.java) class for the finished, runnable code.
+The model can be tied to the existing recycler view and its adapter via method:
+```java
+    model.install(recyclerView, adapter);
+```    
+
+Yes, yes, we are aware that in MVC the model should not know much about adapter, leave alone the view. However if the model must notify the view when it has data ready (so the region should be repainted), it needs the handle where to sent the event. And if the model needs to know which data are in more priority to provide, it must ask for the view about the currently visible region. This is not a typical one way MVC bus, so sorry about that.
+
+As about adapter, it must be a [RecyclerView.Adapter](https://developer.android.com/reference/android/support/v7/widget/RecyclerView.Adapter.html), nothing special is required. Its main task is to create views for complex items. See the [BookListAdapter](app/src/main/java/com/ames/books/presenter/BookListAdapter.java) class for our version. In our case adapter also creates model and attaches the primary data provider, but for sure you may design this differently.
 
 The model itself fetches requests using your class that must implement the [PrimaryDataProvider](uncover/src/main/java/ames/com/uncover/primary/PrimaryDataProvider.java). It requests data asynchronuosly, in non-overapping chunks of the fixed (configurable) size, and prioritizes recent requests over older ones. While parallel requests are possible, they are under control: the maximal number is configurable (at most two are allowed by default).
 
 To show the new data, simply call setQuery on the [UncoveringDataModel](uncover/src/main/java/ames/com/uncover/UncoveringDataModel.java). This method accepts the [Query](uncover/src/main/java/ames/com/uncover/primary/Query.java) that is passed to your [PrimaryDataProvider](uncover/src/main/java/ames/com/uncover/primary/PrimaryDataProvider.java). To be notified about the new data that the view must display, register the data listener as it is seen in [BookListAdapter](app/src/main/java/com/ames/books/presenter/BookListAdapter.java) class.
-
-To drop swiped-over pages from the queue without fetching them, you need to install the [FetchOptimizer](uncover/src/main/java/ames/com/uncover/impl/FetchOptimizer.java):
-
-    FetchOptimizer.install(context, recyclerView, adapter);
-    
-This must be done when the in onCreate (for activity) or onCreateView (for a fragment), when context, view and its adapter are all available. Unlike for some other known solutions, you do not need to mess with MVC logic in your code to benefit from the visible area information. The fetch optimizer is installed in [BookListFragment](app/src/main/java/com/ames/books/BookListFragment.java). 
 
 Model also provides methods to get and set the state as Serializable. This is for saving instance state in cases like device reorientation; not for long term storage. Memory trimming is supported, see [BookListActivity](app/src/main/java/com/ames/books/BookListActivity.java).   
 

@@ -13,10 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package ames.com.uncover.impl;
+package com.ames.uncover.impl;
 
-import ames.com.uncover.primary.PrimaryRequest;
-import ames.com.uncover.primary.PrimaryResponse;
+import com.ames.uncover.primary.PrimaryRequest;
+import com.ames.uncover.primary.PrimaryResponse;
 
 /**
  * Callback to receive notifications that that data have recently been provided for the given data range.

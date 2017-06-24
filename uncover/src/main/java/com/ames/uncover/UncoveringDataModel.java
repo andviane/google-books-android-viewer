@@ -13,8 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package ames.com.uncover;
+package com.ames.uncover;
 
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import java.io.ByteArrayInputStream;
@@ -28,12 +29,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import android.support.v7.widget.LinearLayoutManager;
 
-import ames.com.uncover.impl.AsyncBridge;
-import ames.com.uncover.impl.AvailableSegment;
-import ames.com.uncover.impl.DataFetchManager;
-import ames.com.uncover.primary.PrimaryDataProvider;
-import ames.com.uncover.primary.Query;
-import ames.com.uncover.primary.SearchCompleteListener;
+import com.ames.uncover.impl.AsyncBridge;
+import com.ames.uncover.impl.AvailableSegment;
+import com.ames.uncover.impl.DataFetchManager;
+import com.ames.uncover.primary.PrimaryDataProvider;
+import com.ames.uncover.primary.Query;
+import com.ames.uncover.primary.SearchCompleteListener;
 
 /**
  * Central class of implementation, providing the fast model for viewing from one side and grouped/async interface from
@@ -60,7 +61,7 @@ public class UncoveringDataModel<ITEM> {
    * The listener of the view or presenter that the model notifies when the data have changed
    * due update arrivals.
    */
-  private UncoverAwareAdapter dataAvailableListener;
+  private RecyclerView.Adapter adapter;
 
   /**
    * The delegate where the model requests fetching the new data when needed.
@@ -128,14 +129,6 @@ public class UncoveringDataModel<ITEM> {
 
   public int getPage(int position) {
     return (position / pageSize);
-  }
-
-  /**
-   * Set listener that receives notifications when data are loaded.
-   */
-  public UncoveringDataModel setDataAvailableListener(UncoverAwareAdapter dataAvailableListener) {
-    this.dataAvailableListener = dataAvailableListener;
-    return this;
   }
 
   /**
@@ -215,8 +208,9 @@ public class UncoveringDataModel<ITEM> {
     data.put(segment.getPage(), segment);
 
     size = Math.max(size, segment.getMaxIndex());
-    if (dataAvailableListener != null) {
-      dataAvailableListener.dataChanged(segment.getFrom(), segment.getTo(), size);
+    if (adapter != null) {
+      adapter.notifyItemRangeChanged(segment.getFrom(),
+         segment.getTo() - segment.getFrom());
     }
     if (firstQueryResult && searchCompleteListener != null) {
       searchCompleteListener.onQuerySearchComplete(query);
@@ -330,7 +324,19 @@ public class UncoveringDataModel<ITEM> {
     return bout.toByteArray();
   }
 
-  public DataFetchManager getDataFetchManager() {
-    return dataFetcher;
+  public void install(final RecyclerView recyclerView, final RecyclerView.Adapter adapter) {
+    recyclerView.setAdapter(adapter);
+    this.adapter = adapter;
+
+    final LinearLayoutManager lm = new LinearLayoutManager(recyclerView.getContext());
+    recyclerView.setLayoutManager(lm);
+    setLayoutManager(lm);
+    recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+      @Override
+      public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+        dataFetcher.notifyVisibleArea(lm.findFirstCompletelyVisibleItemPosition(),
+           lm.findLastVisibleItemPosition() + 1);
+      }
+    });
   }
 }

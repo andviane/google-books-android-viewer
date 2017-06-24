@@ -13,14 +13,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package ames.com.uncover;
+package com.ames.uncover;
+
+import com.ames.uncover.primary.PrimaryDataProvider;
+import com.ames.uncover.primary.PrimaryRequest;
+import com.ames.uncover.primary.PrimaryResponse;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import ames.com.uncover.primary.PrimaryDataProvider;
-import ames.com.uncover.primary.PrimaryRequest;
-import ames.com.uncover.primary.PrimaryResponse;
 
 /**
  * Simulates the primary fetcher

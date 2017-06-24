@@ -13,6 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
+
+
 apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
@@ -25,7 +27,7 @@ android {
         minSdkVersion 9
         targetSdkVersion 25
         versionCode 2
-        versionName "1.3"
+        versionName "2.0.1-SNAPSHOT"
         setProperty("archivesBaseName", "uncover-$versionName")
     }
     buildTypes {
@@ -49,9 +51,14 @@ dependencies {
 signing {
     sign configurations.default
     sign configurations.archives
-    sign file("$buildDir/publications/maven/pom-default.xml")
-    // Shame on that, but still looking for work around.
-    sign file("${project.gradle.gradleUserHomeDir}/../.m2/repository/io/github/andviane/uncover/maven-metadata.xml")
+
+    // Shame on that solutions below, but still looking for work around.
+    try {
+        sign file("$buildDir/publications/maven/pom-default.xml")
+        sign file("${project.gradle.gradleUserHomeDir}/../.m2/repository/io/github/andviane/uncover/maven-metadata.xml")
+    } catch (Exception exc) {
+        println "Sorry, please rerun the task"
+    }
 }
 
 
@@ -150,8 +157,8 @@ publishing {
             username System.env.ANDVIANE_USERNAME
             password System.env.ANDVIANE_PASSWORD
           }
-          //url 'https://oss.sonatype.org/content/repositories/snapshots'
-          url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+          url 'https://oss.sonatype.org/content/repositories/snapshots'
+          //url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
         }
     }
 }

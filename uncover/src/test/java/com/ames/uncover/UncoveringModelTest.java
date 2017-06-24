@@ -13,19 +13,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package ames.com.uncover;
+package com.ames.uncover;
+
+import com.ames.uncover.impl.AvailableSegment;
+import com.ames.uncover.impl.DataFetchManager;
+import com.ames.uncover.primary.Query;
 
 import org.junit.Test;
 
-import ames.com.uncover.impl.AvailableSegment;
-import ames.com.uncover.impl.DataFetchManager;
-import ames.com.uncover.primary.Query;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;

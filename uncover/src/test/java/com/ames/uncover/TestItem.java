@@ -13,24 +13,39 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package ames.com.uncover.primary;
+package com.ames.uncover;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
- * Represents the Query that PrimaryDataProvider must know to get data. This class can
- * later be extended as needed, the current version simply wraps String
+ * The item used in tests
  */
-public class Query implements Serializable {
+public class TestItem {
 
-  private final String queryString;
+  public String value;
 
-  public Query(String queryString) {
-    this.queryString = queryString;
+  public String toString() {
+    return value;
   }
 
-  public String getQueryString() {
-    return queryString;
+  public TestItem() {
+
+  }
+
+  public TestItem(String header) {
+    this.value = header;
+  }
+
+  public TestItem(int position) {
+    this("p." + position);
+  }
+
+  public static ArrayList<TestItem> range(int from, int to) {
+    ArrayList<TestItem> items = new ArrayList<>(to - from);
+    for (int i = from; i < to; i++) {
+      items.add(new TestItem(i));
+    }
+    return items;
   }
 
   @Override
@@ -38,18 +53,14 @@ public class Query implements Serializable {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    Query query = (Query) o;
+    TestItem testItem = (TestItem) o;
 
-    return queryString != null ? queryString.equals(query.queryString) : query.queryString == null;
+    return value.equals(testItem.value);
 
   }
 
   @Override
   public int hashCode() {
-    return queryString != null ? queryString.hashCode() : 0;
-  }
-
-  public String toString() {
-    return queryString;
+    return value.hashCode();
   }
 }

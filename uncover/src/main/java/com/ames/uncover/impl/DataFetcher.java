@@ -13,27 +13,27 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package ames.com.uncover;
+package com.ames.uncover.impl;
 
-import android.support.v7.widget.LinearLayoutManager;
-
-import ames.com.uncover.UncoveringDataModel;
+import com.ames.uncover.primary.PrimaryRequest;
 
 /**
- * Adapter that uses UncoveringDataModel as its data model.
+ * Data fetcher
  */
-public interface UncoverAwareAdapter<T> {
+public interface DataFetcher<ITEM> {
 
   /**
-   * Notify that data have changed withing the given range.
-   *
-   * @param from start of the range
-   * @param to end of the range
-   * @param totalNumberOfItems total number of items in the list.
+   * Set the on data available listener to be notified when data are availab.e
    */
-  void dataChanged(int from, int to, int totalNumberOfItems);
+  void setOnDataAvailableListener(DataAvailableListener<ITEM> listener);
 
-  void setLayoutManger(LinearLayoutManager manager);
+  /**
+   * Initiate data request
+   */
+  void requestData(PrimaryRequest request);
 
-  UncoveringDataModel<T> getModel();
+  /**
+   * Create the new instance of the data fetcher free from all processes pending.
+   */
+  DataFetcher reset();
 }

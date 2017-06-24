@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package ames.com.uncover.impl;
+package com.ames.uncover.impl;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,10 +21,15 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import ames.com.uncover.TestItem;
-import ames.com.uncover.UncoveringDataModel;
-import ames.com.uncover.primary.PrimaryRequest;
-import ames.com.uncover.primary.PrimaryResponse;
+import com.ames.uncover.TestItem;
+import com.ames.uncover.impl.AvailableSegment;
+import com.ames.uncover.impl.DataAvailableListener;
+import com.ames.uncover.impl.DataFetchManager;
+import com.ames.uncover.impl.DataFetcher;
+
+import com.ames.uncover.UncoveringDataModel;
+import com.ames.uncover.primary.PrimaryRequest;
+import com.ames.uncover.primary.PrimaryResponse;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;

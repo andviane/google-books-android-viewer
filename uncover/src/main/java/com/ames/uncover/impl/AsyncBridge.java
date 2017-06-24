@@ -13,14 +13,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package ames.com.uncover.impl;
+package com.ames.uncover.impl;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
-import ames.com.uncover.primary.PrimaryDataProvider;
-import ames.com.uncover.primary.PrimaryRequest;
-import ames.com.uncover.primary.PrimaryResponse;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import com.ames.uncover.impl.DataAvailableListener;
+import com.ames.uncover.impl.DataFetcher;
+import com.ames.uncover.primary.PrimaryDataProvider;
+import com.ames.uncover.primary.PrimaryRequest;
+import com.ames.uncover.primary.PrimaryResponse;
 
 /**
  * This class manages the correct thread transition using Android AsyncTask. It is the DataFetcher,
@@ -36,6 +41,8 @@ public class AsyncBridge<ITEM> implements DataFetcher<ITEM> {
   public AsyncBridge(PrimaryDataProvider provider) {
     this.provider = provider;
   }
+
+  public String errms;
 
   @Override
   public void setOnDataAvailableListener(DataAvailableListener listener) {
@@ -71,7 +78,8 @@ public class AsyncBridge<ITEM> implements DataFetcher<ITEM> {
       @Override
       protected PrimaryResponse doInBackground(PrimaryRequest... params) {
         try {
-          return provider.fetch(params[0]);
+          PrimaryResponse r = provider.fetch(params[0]);
+          return r;
         } catch (Exception e) {
           Log.e(TAG, "Failed to fetch", e);
           return null;
