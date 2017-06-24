@@ -25,7 +25,7 @@ android {
         minSdkVersion 9
         targetSdkVersion 25
         versionCode 2
-        versionName "1.2"
+        versionName "1.3"
         setProperty("archivesBaseName", "uncover-$versionName")
     }
     buildTypes {
@@ -90,7 +90,7 @@ publishing {
 
             artifact("$buildDir/outputs/aar/uncover-${android.defaultConfig.versionName}-release.aar")
             artifact("$buildDir/outputs/aar/uncover-${android.defaultConfig.versionName}-release.aar.asc")  {
-                classifier = 'aar' 
+                extension = 'aar.asc' 
                 builtBy signDefault
             }
 
@@ -113,17 +113,21 @@ publishing {
             def dependenciesNode = asNode().appendNode('dependencies')
 
             configurations.compile.allDependencies.each {
+              if (it.group) {
                         def dependencyNode = dependenciesNode.appendNode('dependency')
                         dependencyNode.appendNode('groupId', it.group)
                         dependencyNode.appendNode('artifactId', it.name)
                         dependencyNode.appendNode('version', it.version)
+              } 
             }
             configurations.testCompile.allDependencies.each {
+              if (it.group) {
                         def dependencyNode = dependenciesNode.appendNode('dependency')
                         dependencyNode.appendNode('groupId', it.group)
                         dependencyNode.appendNode('artifactId', it.name)
                         dependencyNode.appendNode('version', it.version)
                         dependencyNode.appendNode('scope', 'test')
+              }
             }
             def d = n.appendNode('developers')
             def me = d.appendNode('developer')
@@ -146,7 +150,7 @@ publishing {
             username System.env.ANDVIANE_USERNAME
             password System.env.ANDVIANE_PASSWORD
           }
-          // url 'https://oss.sonatype.org/content/repositories/snapshots'
+          //url 'https://oss.sonatype.org/content/repositories/snapshots'
           url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
         }
     }
