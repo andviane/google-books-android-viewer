@@ -169,7 +169,7 @@ The app uses Google Books API to scroll over the list of content that is returne
 
 If you just want quick preview, the Android app is available at [PlayStore](https://play.google.com/store/apps/details?id=com.ames.books&rdid=com.ames.books)
 
-The app also fetches the book cover images that take much longer to appear. Image downloading and management is implemented with [Picaso](http://square.github.io/picasso/) and not directly related to the demonstration of Uncover library capabilities.
+The app also fetches the book cover images that take much longer to appear. Image downloading and management is implemented with [Picasso](http://square.github.io/picasso/) and not directly related to the demonstration of Uncover library capabilities.
 
 
 See also [the licensing conditions](https://developers.google.com/books/terms) of Google Books API. 
