@@ -1,3 +1,5 @@
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.andviane/uncover/badge.svg)](https://mvnrepository.com/artifact/io.github.andviane/uncover)
+
 # Infinite scrolling lists are both easy and efficient
 
 ![Screen shot](https://raw.githubusercontent.com/andviane/google-books-android-viewer/master/info/sc1_sm.png "Our proof of concept app")
@@ -22,8 +24,6 @@ dependencies {
 into your Gradle build script. 
 
 # Uncover library
-
-The main focus of this project
 
 The proposed library is centered around the data model [UncoveringDataModel](uncover/src/main/java/ames/com/uncover/UncoveringDataModel.java) that can be relatively easily tied to the data model of any UI list. This model provides item values by position, as well as the total number of items:
 ```java
