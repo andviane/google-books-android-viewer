@@ -1,4 +1,4 @@
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.andviane/uncover/badge.svg)](https://mvnrepository.com/artifact/io.github.andviane/uncover) [![Build Status](https://travis-ci.org/andviane/google-books-android-viewer.svg?branch=master)](https://travis-ci.org/andviane/google-books-android-viewer)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.andviane/uncover/badge.svg)](https://mvnrepository.com/artifact/io.github.andviane/uncover) [![Build Status](https://travis-ci.org/andviane/google-books-android-viewer.svg?branch=master)](https://travis-ci.org/andviane/google-books-android-viewer) ![Javadoc](https://andviane.github.io/google-books-android-viewer/javadoc/index.html)
 
 # Infinite scrolling lists are both easy and efficient
 
