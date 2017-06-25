@@ -10,19 +10,20 @@ This project is a proof of concept demonstrator of Uncover library for Android. 
  
 The size of the items (hence the number of items per page) need not be constant, as it is often the case for descriptions of variable length or other similar texts. 
 
-The library is available in the Uncover folder under Apache 2.0 license. 
+The library sources are available in the Uncover folder under Apache 2.0 license. This project contains the source code. To fetch from the pgp-signed build of this library from [Maven Central](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22io.github.andviane%22%20AND%20a%3A%22uncover%22) as your dependency, simply include
 
-To demonstrate the library capabilities, the project provides Android application to demonstrate the "infinite scroll" over Google Books, displaying cover images and titles. This application is available under GPL v3.0.
+```java
 
-# Description of the demo app
-
-The app uses Google Books API to scroll over the list of content that is returned as search result. It consists of two screens (fragments). The list screen one allows to scroll over search results, showing only cover thumb image, header, author and page count. The details screen that opens after tapping anywhere on the book item reveals more information about the particular book. Use the back button for returning back to the list.
-
-If you just want quick preview, the Android app is available at [PlayStore](https://play.google.com/store/apps/details?id=com.ames.books&rdid=com.ames.books)
-
-The app also fetches the book cover images that take much longer to appear. Image downloading and management is implemented with [Picaso](http://square.github.io/picasso/) and not directly related to the demonstration of Uncover library capabilities.
+dependencies {
+    compile ('io.github.andviane:uncover:2.0.1@aar')
+    ..
+}    
+```    
+into your Gradle build script. 
 
 # Uncover library
+
+The main focus of this project
 
 The proposed library is centered around the data model [UncoveringDataModel](uncover/src/main/java/ames/com/uncover/UncoveringDataModel.java) that can be relatively easily tied to the data model of any UI list. This model provides item values by position, as well as the total number of items:
 ```java
@@ -70,51 +71,39 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import com.ames.uncover.UncoveringDataModel;
 import com.ames.uncover.primary.PrimaryDataProvider;
 import com.ames.uncover.primary.PrimaryRequest;
 import com.ames.uncover.primary.PrimaryResponse;
 import com.ames.uncover.primary.Query;
 
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-  UncoveringDataModel<String> model;
 
-  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler);
-
-    model = new UncoveringDataModel<>();
+    final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler);
+    final UncoveringDataModel<String> model = new UncoveringDataModel<>();
 
     model.setPrimaryDataProvider(new PrimaryDataProvider<String>() {
+
       @Override
       public PrimaryResponse fetch(PrimaryRequest primaryRequest) {
         // Observe logs so see the fetching
-        Log.i("Fetch", "Fetch " + primaryRequest.getFrom() + "- " + primaryRequest.getTo());
-        pause();
+        Log.i("Fetch", "Service call to fetch items" + primaryRequest.getFrom() + "- " + primaryRequest.getTo());
+
+        // Simulate pause. We are on the background thread now.
+        try { Thread.sleep(300); } catch (InterruptedException e) {}
 
         ArrayList<String> data = new ArrayList<String>();
-
         for (int p = primaryRequest.getFrom(); p < primaryRequest.getTo(); p++) {
           data.add("Item " + p + " by " + primaryRequest.getQuery());
         }
         // Integer.MAX_VALUE items in total, enjoy scrolling
-        PrimaryResponse<String> r = new PrimaryResponse<String>(data, Integer.MAX_VALUE);
-        return r;
-      }
-
-      // Relax, we are on the background thread. This pause allows to watch optimizations.
-      private void pause() {
-        try {
-          Thread.sleep(200);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
+        return new PrimaryResponse<String>(data, Integer.MAX_VALUE);
       }
     });
 
@@ -122,8 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
       @Override
       public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new RecyclerView.ViewHolder(new TextView(MainActivity.this)) {
-        };
+        return new RecyclerView.ViewHolder(new TextView(MainActivity.this)) { };
       }
 
       @Override
@@ -137,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
         return model.size();
       }
     };
+
     model.install(recyclerView, adapter);
 
     // Done, now just set the query to show. If we do not set the query, all we see is empty list
@@ -145,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
-This is off course totally "hello world", the primary data provider just bakes the data locally and the adapter is just a TextView. Only such a one page implementation demo should use inner class for data fetcher. But we included a short delay on getting the data, to demonstrate that while looks simple, this is still a call on another thread, fetching is still chunked, and requests to get these chunks are still optimized. 
+This is off course the totally "hello world" demo: the primary data provider just bakes the data locally, the adapter is just a TextView and, unlike in production code, the general style and design are optimized for quick and easy reading. We included a short delay on getting the data, to demonstrate that while looks simple, this is still a call on another thread, fetching is still chunked, and requests to get these chunks are still optimized. 
 
 You also need a layout to make this compile:
 
@@ -170,7 +159,16 @@ You also need a layout to make this compile:
 
 With these two files, it is easy to build the app that is ready to run.
 
-# Note
+# Description of the demo app
+
+To demonstrate the library capabilities, the project provides Android application to demonstrate the "infinite scroll" over Google Books, displaying cover images and titles. This application is available under GPL v3.0.
+
+The app uses Google Books API to scroll over the list of content that is returned as search result. It consists of two screens (fragments). The list screen one allows to scroll over search results, showing only cover thumb image, header, author and page count. The details screen that opens after tapping anywhere on the book item reveals more information about the particular book. Use the back button for returning back to the list.
+
+If you just want quick preview, the Android app is available at [PlayStore](https://play.google.com/store/apps/details?id=com.ames.books&rdid=com.ames.books)
+
+The app also fetches the book cover images that take much longer to appear. Image downloading and management is implemented with [Picaso](http://square.github.io/picasso/) and not directly related to the demonstration of Uncover library capabilities.
+
 
 See also [the licensing conditions](https://developers.google.com/books/terms) of Google Books API. 
 
