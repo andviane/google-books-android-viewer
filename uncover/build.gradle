@@ -19,6 +19,13 @@ apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
+ext {
+    libVersion = "2.0.2"
+    snapshot = false
+
+    libVersionName = snapshot? libVersion+"-SNAPSHOT" : libVersion
+}
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.0"
@@ -27,7 +34,7 @@ android {
         minSdkVersion 9
         targetSdkVersion 25
         versionCode 2
-        versionName "2.0.1-SNAPSHOT"
+        versionName project.ext.libVersionName
         setProperty("archivesBaseName", "uncover-$versionName")
     }
     buildTypes {
@@ -52,10 +59,11 @@ signing {
     sign configurations.default
     sign configurations.archives
 
-    // Shame on that solutions below, but still looking for work around.
+    // Shame on that solutions below, but seems that new implementation
+    // of the maven publisher plugin can only generate pom on publishing. 
+    // As a result, gradle publish must run twice.
     try {
         sign file("$buildDir/publications/maven/pom-default.xml")
-        sign file("${project.gradle.gradleUserHomeDir}/../.m2/repository/io/github/andviane/uncover/maven-metadata.xml")
     } catch (Exception exc) {
         println "Sorry, please rerun the task"
     }
@@ -90,11 +98,6 @@ publishing {
                 builtBy signDefault
             }
 
-            artifact("${project.gradle.gradleUserHomeDir}/../.m2/repository/io/github/andviane/uncover/maven-metadata.xml.asc")  {
-                classifier = 'maven-metadata.xml' 
-                builtBy signDefault
-            }
-
             artifact("$buildDir/outputs/aar/uncover-${android.defaultConfig.versionName}-release.aar")
             artifact("$buildDir/outputs/aar/uncover-${android.defaultConfig.versionName}-release.aar.asc")  {
                 extension = 'aar.asc' 
@@ -106,7 +109,7 @@ publishing {
 
             def n = asNode();
             n.appendNode('name', 'Uncover')
-            n.appendNode('description', 'Android library to bridge infinite scroller based on RecyclerView with slow asynchronous data source like web service or database')
+            n.appendNode('description', "Android library to bridge infinite scroller based on RecyclerView with slow asynchronous data source like web service or database. Please use @aar when referencing, like ' compile ('io.github.andviane:uncover:2.0.1@aar') in Gradle'")
             n.appendNode('url', 'https://github.com/andviane/google-books-android-viewer')
             def licenses = n.appendNode('licenses')
             def apache = licenses.appendNode('license')
@@ -157,8 +160,12 @@ publishing {
             username System.env.ANDVIANE_USERNAME
             password System.env.ANDVIANE_PASSWORD
           }
-          url 'https://oss.sonatype.org/content/repositories/snapshots'
-          //url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+
+          if (snapshot) {
+            url 'https://oss.sonatype.org/content/repositories/snapshots'
+          } else {
+            url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+          }
         }
     }
 }
