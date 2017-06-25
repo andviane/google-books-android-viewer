@@ -15,8 +15,16 @@ limitations under the License.
  */
 package com.ames.uncover;
 
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+
+import com.ames.uncover.impl.AsyncBridge;
+import com.ames.uncover.impl.AvailableSegment;
+import com.ames.uncover.impl.DataFetchManager;
+import com.ames.uncover.primary.PrimaryDataProvider;
+import com.ames.uncover.primary.Query;
+import com.ames.uncover.primary.SearchCompleteListener;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,15 +34,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import android.support.v7.widget.LinearLayoutManager;
-
-import com.ames.uncover.impl.AsyncBridge;
-import com.ames.uncover.impl.AvailableSegment;
-import com.ames.uncover.impl.DataFetchManager;
-import com.ames.uncover.primary.PrimaryDataProvider;
-import com.ames.uncover.primary.Query;
-import com.ames.uncover.primary.SearchCompleteListener;
 
 /**
  * Central class of implementation, providing the fast model for viewing from one side and grouped/async interface from
@@ -88,6 +87,9 @@ public class UncoveringDataModel<ITEM> {
 
   private SearchCompleteListener searchCompleteListener;
 
+  /**
+   * Internal method used by data fetch manager
+   */
   public boolean isFirstQueryResult() {
     return firstQueryResult;
   }
@@ -108,6 +110,13 @@ public class UncoveringDataModel<ITEM> {
     }
   }
 
+  /**
+   * Set the query for the data, shown by this model. The query is provided to your
+   * primary data fetcher when requesting the data. After the new query is set, the
+   * model is invalidated, requesting all data to be newly loaded.
+   *
+   * @param query the query to set
+   */
   public void setQuery(Query query) {
     reset();
     this.query = query;
@@ -118,15 +127,33 @@ public class UncoveringDataModel<ITEM> {
     }
   }
 
+  /**
+   * Get the configured paga size
+   *
+   * @return
+   */
   public int getPageSize() {
     return pageSize;
   }
 
+  /**
+   * Set the configured page size (the number of items wanted in requests). This must be set before
+   * the model is used and cannot be modified later.
+   *
+   * @param pageSize the number of items per request
+   */
   public UncoveringDataModel setPageSize(int pageSize) {
     this.pageSize = pageSize;
     return this;
   }
 
+  /**
+   * Get the number of the page for the given position
+   *
+   * @param position the position in the model
+   *
+   * @return the number of the page
+   */
   public int getPage(int position) {
     return (position / pageSize);
   }
@@ -174,10 +201,6 @@ public class UncoveringDataModel<ITEM> {
     if (dataFetcher != null && !dataFetcher.alreadyFetching(page)) {
       dataFetcher.requestData(page);
     }
-  }
-
-  public DataFetchManager getDataFetcher() {
-    return dataFetcher;
   }
 
   public UncoveringDataModel setDataFetcher(DataFetchManager dataFetcher) {
@@ -242,11 +265,18 @@ public class UncoveringDataModel<ITEM> {
     return searchCompleteListener;
   }
 
+  /**
+   * Set the search listener that is fired when the data fetcher returns the first results. Can be
+   * used to hide the progress indicator, enable submit query button and things the like.
+   */
   public UncoveringDataModel setSearchCompleteListener(SearchCompleteListener searchCompleteListener) {
     this.searchCompleteListener = searchCompleteListener;
     return this;
   }
 
+  /**
+   * Get the currently set query
+   */
   public Query getQuery() {
     return query;
   }
@@ -259,6 +289,9 @@ public class UncoveringDataModel<ITEM> {
     return this;
   }
 
+  /**
+   * Internal method used by data fetch manager.
+   */
   public LinearLayoutManager getLayoutManager() {
     return layoutManager;
   }
@@ -324,6 +357,14 @@ public class UncoveringDataModel<ITEM> {
     return bout.toByteArray();
   }
 
+  /**
+   * The main method to configure recycler view, its adapter and this model to work together. This
+   * method must be called once during the initialization. It wires all listeners and adds some
+   * other internal classes
+   *
+   * @param recyclerView the view that will work with this model
+   * @param adapter the adapter that will work with this model
+   */
   public void install(final RecyclerView recyclerView, final RecyclerView.Adapter adapter) {
     recyclerView.setAdapter(adapter);
     this.adapter = adapter;
