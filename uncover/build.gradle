@@ -177,6 +177,12 @@ task sourceJar(type: Jar) {
 
 task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
+    title = "Uncover library for Android"
+    destinationDir = file "$buildDir/../../javadoc"
+
+    doFirst {
+      delete destinationDir
+    }
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {

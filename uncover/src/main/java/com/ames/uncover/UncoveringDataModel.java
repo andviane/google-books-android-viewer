@@ -203,6 +203,9 @@ public class UncoveringDataModel<ITEM> {
     }
   }
 
+  /**
+   * Internal method.
+   */
   public UncoveringDataModel setDataFetcher(DataFetchManager dataFetcher) {
     this.dataFetcher = dataFetcher;
     return this;
@@ -215,11 +218,6 @@ public class UncoveringDataModel<ITEM> {
    */
   public int size() {
     return size;
-  }
-
-  public UncoveringDataModel setSize(int size) {
-    this.size = size;
-    return this;
   }
 
   /**

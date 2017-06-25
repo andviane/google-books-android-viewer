@@ -19,10 +19,17 @@ package com.ames.uncover.primary;
  * Listener to notify when the new search data arrive. Can be used for tasks
  * like hiding progress bar and re-enabling search button. This listener only
  * receives events about arrival of the first result of the new query, and
- * is not notified about the later srolling
+ * is not notified about the later scrolling. The listener is normally
+ * set on @{@link com.ames.uncover.UncoveringDataModel}
  */
 public interface SearchCompleteListener {
 
+  /**
+   * Invoked when first (not all) results arrive after calling the @{@link com.ames.uncover.UncoveringDataModel#setQuery(Query)}
+   * method of the model.
+   *
+   * @param query the query for which results arrive.
+   */
   void onQuerySearchComplete(Query query);
 
 }

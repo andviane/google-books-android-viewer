@@ -32,20 +32,39 @@ public class PrimaryResponse<ITEM> {
    */
   protected final Integer totalItems;
 
+  /**
+   * Bild primary response that carries data and the total number of data for the query
+   *
+   * @param data the data (normally only a single page)
+   * @param totalItems the number of data items in total, can be huge.
+   */
   public PrimaryResponse(List<ITEM> data, int totalItems) {
     this.data = data;
     this.totalItems = totalItems;
   }
 
+  /**
+   * Build the primary response the has not data about the total number of items. The model will
+   * use value from the previous response or will make the best guess.
+   * @param data
+   */
   public PrimaryResponse(List<ITEM> data) {
     this.data = data;
     this.totalItems = null;
   }
 
+  /**
+   * Get the data items.
+   */
   public List<ITEM> getData() {
     return data;
   }
 
+  /**
+   * Get the total number of items for the query
+   *
+   * @return the number of items, null if unknown and not provided.
+   */
   public Integer getTotalItems() {
     return totalItems;
   }

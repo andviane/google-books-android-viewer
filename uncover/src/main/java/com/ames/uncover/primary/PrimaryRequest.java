@@ -16,7 +16,7 @@ limitations under the License.
 package com.ames.uncover.primary;
 
 /**
- * Request to the primary data source.
+ * Request to the primary data source. {@link PrimaryDataProvider} receives this request from the model and must provide the data.
  */
 public class PrimaryRequest {
 
@@ -37,6 +37,9 @@ public class PrimaryRequest {
    */
   protected final boolean totalDataCountRequired;
 
+  /**
+   * Internal field used by data fetcher.
+   */
   protected long sent;
 
   /**
@@ -50,15 +53,24 @@ public class PrimaryRequest {
 
   public int page = -1;
 
+  /**
+   * Internal method used by data fetcher.
+   */
   public PrimaryRequest setChannel(int channel) {
     this.channel = channel;
     return this;
   }
 
+  /**
+   * Get the page assigned for this request. The model decides about which page it should be.
+   */
   public int getPage() {
     return page;
   }
 
+  /**
+   * Set the page. The page is normally set by the model.
+   */
   public PrimaryRequest setPage(int page) {
     this.page = page;
     return this;
@@ -66,12 +78,14 @@ public class PrimaryRequest {
 
   /**
    * The number of the channel (parallel thread) used for sending this request.
-
    */
   protected int channel;
 
   private static final long ofs = System.currentTimeMillis();
 
+  /**
+   * Build the request specifying the range, query and if the total data count required
+   */
   public PrimaryRequest(int from, int to, Query query, boolean totalDataCountRequired) {
     this.from = from;
     this.to = to;
@@ -79,26 +93,43 @@ public class PrimaryRequest {
     this.totalDataCountRequired = totalDataCountRequired;
   }
 
+  /**
+   * Build the request assuming total data count is not required (known from the previous responses)
+   */
   public PrimaryRequest(int from, int to, Query query) {
     this(from, to, query, false);
   }
 
+  /**
+   * Get start of the range.
+   */
   public int getFrom() {
     return from;
   }
 
+  /**
+   * Get end of the range.
+   */
   public int getTo() {
     return to;
   }
 
+  /**
+   * Get the query to use
+   *
+   * @return the query to use, that same that was set on {@link com.ames.uncover.UncoveringDataModel#setQuery(Query)}
+   */
   public Query getQuery() {
     return query;
   }
 
   public String toString() {
-    return from + " .. " + to + (sent > 0?(" sent + " + (sent-ofs)):" not sent") + " ?" + query;
+    return from + " .. " + to + (sent > 0 ? (" sent + " + (sent - ofs)) : " not sent") + " ?" + query;
   }
 
+  /**
+   * Set the time when request has been sent to the primary provider to get the data.
+   */
   public void setSent(long sent) {
     this.sent = sent;
   }

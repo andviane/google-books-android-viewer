@@ -19,20 +19,33 @@ import java.io.Serializable;
 
 /**
  * Represents the Query that PrimaryDataProvider must know to get data. This class can
- * later be extended as needed, the current version simply wraps String
+ * be extended as needed, passing the derived subclass that will make way to your
+ * {@link PrimaryDataProvider}. The default implementation wraps a simple string.
  */
 public class Query implements Serializable {
 
   private final String queryString;
 
+  /**
+   * Build the new query that only contains the query string.
+   * @param queryString
+   */
   public Query(String queryString) {
     this.queryString = queryString;
   }
 
+  /**
+   * Get the query string
+   *
+   * @return query string
+   */
   public String getQueryString() {
     return queryString;
   }
 
+  /**
+   * Compares the query string
+   */
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -44,11 +57,19 @@ public class Query implements Serializable {
 
   }
 
+  /**
+   * Uses hash code of the query string
+   *
+   * @return hash code of the query string or 0 if null.
+   */
   @Override
   public int hashCode() {
     return queryString != null ? queryString.hashCode() : 0;
   }
 
+  /**
+   * Returns the query string.
+   */
   public String toString() {
     return queryString;
   }
