@@ -93,7 +93,8 @@ public class MainActivity extends AppCompatActivity {
       @Override
       public PrimaryResponse fetch(PrimaryRequest primaryRequest) {
         // Observe logs so see the fetching
-        Log.i("Fetch", "Service call to fetch items" + primaryRequest.getFrom() + "- " + primaryRequest.getTo());
+        Log.i("Fetch", "Service call to fetch items" + 
+          primaryRequest.getFrom() + "- " + primaryRequest.getTo());
 
         // Simulate pause. We are on the background thread now.
         try { Thread.sleep(300); } catch (InterruptedException e) {}
@@ -128,13 +129,14 @@ public class MainActivity extends AppCompatActivity {
 
     model.install(recyclerView, adapter);
 
-    // Done, now just set the query to show. If we do not set the query, all we see is empty list
+    // Done, now just set the query to show. If we do not set the query, all we see is empty list.
+    // Add the button and set the query from its listener to observe the output change.
     model.setQuery(new Query("abc"));
   }
 }
 ```
 
-This is off course the totally "hello world" demo: the primary data provider just bakes the data locally, the adapter is just a TextView and, unlike in production code, the general style and design are optimized for quick and easy reading. We included a short delay on getting the data, to demonstrate that while looks simple, this is still a call on another thread, fetching is still chunked, and requests to get these chunks are still optimized. 
+This is off course the totally "hello world" demo: the primary data provider just bakes the data locally, the adapter works with TextView and, unlike in production code, the general style and design are optimized for quick and easy reading. We included a short delay on getting the data, to demonstrate that while looks simple, this is still a call on another thread, fetching is still chunked, and requests to get these chunks are still optimized. 
 
 You also need a layout to make this compile:
 
