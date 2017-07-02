@@ -46,6 +46,9 @@ public class BookDetailsFragment extends Fragment implements ShowDetailsListener
   protected TextView purchaseLink;
   protected String purchaseUrl;
 
+  protected TextView previewLink;
+  protected String previewUrl;
+
   protected DetailsLoader detailsLoader = new DetailsLoader(this);
   protected PicassoService picassoService = new PicassoService();
 
@@ -87,6 +90,23 @@ public class BookDetailsFragment extends Fragment implements ShowDetailsListener
           }
         } catch (Exception e) {
           Log.d(TAG, "Broken purchase URL " + purchaseLink);
+        }
+      }
+    });
+
+    previewLink = (TextView) view.findViewById(R.id.preview_link);
+
+    previewLink.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        try {
+          Log.i(TAG, "Preview "+previewUrl);
+          if (!Strings.isNullOrEmpty(previewUrl)) {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(previewUrl));
+            startActivity(browserIntent);
+          }
+        } catch (Exception e) {
+          Log.d(TAG, "Broken preview URL " + previewUrl);
         }
       }
     });
@@ -188,6 +208,7 @@ public class BookDetailsFragment extends Fragment implements ShowDetailsListener
 
     try {
       setSaleInfo(current);
+      setPreviewInfo(current);
       String subtitleText = details.getSubtitle();
 
       String desc = details.getDescription();
@@ -248,5 +269,15 @@ public class BookDetailsFragment extends Fragment implements ShowDetailsListener
   public void reconfigureServices(DetailsLoader detailsLoader, PicassoService picassoService) {
     this.detailsLoader = detailsLoader;
     this.picassoService = picassoService;
+  }
+
+  public void setPreviewInfo(Book current) {
+    if (current.getDetails() != null && current.getDetails().getPreviewUrl() != null) {
+      previewLink.setVisibility(View.VISIBLE);
+      previewUrl = current.getDetails().getPreviewUrl();
+    } else {
+      previewLink.setVisibility(View.GONE);
+      previewUrl = null;
+    }
   }
 }

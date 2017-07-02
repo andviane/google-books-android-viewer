@@ -16,15 +16,16 @@ public class BookDetails implements Serializable {
   final String purchaseUrl;
   final String publisher;
   final String publishedDate;
+  final String previewUrl;
 
-  public BookDetails(String subtitle, String description, String fullPicture, String purchaseUrl, String publisher, String publishedDate) {
+  public BookDetails(String subtitle, String description, String fullPicture, String purchaseUrl, String previewUrl, String publisher, String publishedDate) {
     this.subtitle = subtitle;
     this.description = description;
     this.fullPicture = fullPicture;
     this.purchaseUrl = purchaseUrl;
     this.publisher = publisher;
     this.publishedDate = publishedDate;
-
+    this.previewUrl = previewUrl;
   }
 
   /**
@@ -51,6 +52,12 @@ public class BookDetails implements Serializable {
     }
     this.publisher = info.getPublisher();
     this.publishedDate = info.getPublishedDate();
+    String preview = info.getPreviewLink();
+    if (Strings.nullToEmpty(preview).equals(Strings.nullToEmpty(purchaseUrl))) {
+      // No need to repeat the same.
+      preview = null;
+    }
+    this.previewUrl = preview;
   }
 
   public String getSubtitle() {
@@ -75,5 +82,9 @@ public class BookDetails implements Serializable {
 
   public String getPublishedDate() {
     return publishedDate;
+  }
+
+  public String getPreviewUrl() {
+    return previewUrl;
   }
 }
