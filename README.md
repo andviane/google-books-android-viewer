@@ -167,11 +167,9 @@ To demonstrate the library capabilities, the project provides Android applicatio
 
 The app uses Google Books API to scroll over the list of content that is returned as search result. It consists of two screens (fragments). The list screen one allows to scroll over search results, showing only cover thumb image, header, author and page count. The details screen that opens after tapping anywhere on the book item reveals more information about the particular book. Use the back button for returning back to the list.
 
-If you just want quick preview, the Android app is available at [PlayStore](https://play.google.com/store/apps/details?id=com.ames.books&rdid=com.ames.books)
+If you just want quick preview, the Android app is available on [F-Droid](https://f-droid.org/packages/com.ames.books/) and [Google Play](https://play.google.com/store/apps/details?id=com.ames.books)
 
 The app also fetches the book cover images that take much longer to appear. Image downloading and management is implemented with [Picasso](http://square.github.io/picasso/) and not directly related to the demonstration of Uncover library capabilities.
 
 
 See also [the licensing conditions](https://developers.google.com/books/terms) of Google Books API. 
-
-
