@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">BookList</string>
+    <string name="pages">%1$d p.</string>
+    <string name="bottom_line">Gepubliceerd door %1$s in %2$s</string>
+    <string name="authors_pages_dot_separator">.</string>
+
+    <string name="loading">Bezig met laden…</string>
+    <string name="no_further_description">Bevat geen verdere omschrijving</string>
+    <string name="book_cover">Boekomslag</string>
+    <string name="search">Zoeken</string>
+    <string name="search_here">Hier zoeken</string>
+    <string name="get_it">Kopen</string>
+    <string name="preview">Voorbeeld</string>
+    <string name="search_about">Over doorzoeken</string>
+</resources>
