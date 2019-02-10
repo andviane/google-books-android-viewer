@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">BookList</string>
+    <string name="pages">%1$d stranice</string>
+    <string name="bottom_line">Objavio %1$s in %2$s</string>
+    <string name="authors_pages_dot_separator">.</string>
+
+    <string name="loading">Učitavanje…</string>
+    <string name="no_further_description">Nema daljnjeg opisa</string>
+    <string name="book_cover">Naslovnica knjige</string>
+    <string name="search">Traži</string>
+    <string name="search_here">Traži ovdje</string>
+    <string name="get_it">Kupi</string>
+    <string name="preview">Pregled</string>
+    <string name="search_about">Pretraži detaljnije</string>
+</resources>
