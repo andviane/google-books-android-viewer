@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">BookList</string>
+    <string name="pages">%1$d Seiten</string>
+    <string name="bottom_line">Herausgegeben durch %1$s in %2$s</string>
+    <string name="authors_pages_dot_separator">.</string>
+
+    <string name="loading">Lade …</string>
+    <string name="no_further_description">Keine Beschreibung</string>
+    <string name="book_cover">Buchcover</string>
+    <string name="search">Suche</string>
+    <string name="search_here">Hier suchen</string>
+    <string name="get_it">Kaufen</string>
+    <string name="preview">Vorschau</string>
+    <string name="search_about">Auf Google suchen</string>
+</resources>
