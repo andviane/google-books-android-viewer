@@ -12,8 +12,7 @@
         android:id="@+id/picture"
         android:layout_width="128dp"
         android:layout_height="105dp"
-        android:contentDescription="@string/book_cover"
-        app:srcCompat="@mipmap/ic_launcher"/>
+        android:contentDescription="@string/book_cover"/>
 
     <LinearLayout
         android:orientation="vertical"

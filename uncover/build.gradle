@@ -27,12 +27,12 @@ ext {
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    compileSdkVersion 29
+    buildToolsVersion '29.0.3'
 
     defaultConfig {
         minSdkVersion 9
-        targetSdkVersion 25
+        targetSdkVersion 27
         versionCode 2
         versionName project.ext.libVersionName
         setProperty("archivesBaseName", "uncover-$versionName")
@@ -46,12 +46,11 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:recyclerview-v7:25.3.1'
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:1.10.19'
 
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.10.19'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
 }
 
 
@@ -79,8 +78,6 @@ publishing {
             artifactId 'uncover'
             version android.defaultConfig.versionName
 
-            artifact(sourceJar)
-            artifact(javadocJar)
             artifact("$buildDir/libs/uncover-${android.defaultConfig.versionName}-javadoc.jar.asc") {
                 classifier = 'javadoc' 
                 extension = 'jar.asc'
@@ -186,7 +183,6 @@ task javadoc(type: Javadoc) {
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
     from javadoc.destinationDir
 }
 
