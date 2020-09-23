@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">책 목록</string>
+    <string name="pages">%1$d 쪽</string>
+    <string name="bottom_line">Published by %1$s in %2$s</string>
+    <string name="authors_pages_dot_separator">.</string>
+
+    <string name="loading">로딩중 …</string>
+    <string name="no_further_description">추가설명 없음</string>
+    <string name="book_cover">책 커버</string>
+    <string name="search">검색</string>
+    <string name="search_here">여기서 검색</string>
+    <string name="get_it">구매</string>
+    <string name="preview">미리보기</string>
+    <string name="search_about">검색 결과</string>
+</resources>
